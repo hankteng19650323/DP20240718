@@ -447,6 +447,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.genericToggle = self.CS.generic_toggle
     ret.stockAeb = self.CS.stock_aeb
+    ret.gasbuttonstatus = self.CS.gasbuttonstatus
 
     # events
     events = []
