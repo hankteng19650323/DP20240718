@@ -444,7 +444,14 @@ class CarInterface(CarInterfaceBase):
     if self.CP.carFingerprint in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor:
       # ignore standstill in hybrid vehicles, since pcm allows to restart without
       # receiving any special command
-      # also if interceptor is detected
+     
+    ret.genericToggle = self.CS.generic_toggle
+    ret.stockAeb = self.CS.stock_aeb
+    ret.gasbuttonstatus = self.CS.gasbuttonstatus
+
+    # events
+    events = []
+    # also if interceptor is detected
       ret.cruiseState.standstill = False
     else:
       ret.cruiseState.standstill = self.CS.pcm_acc_status == 7
