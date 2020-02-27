@@ -37,6 +37,8 @@ def get_can_parser(CP):
     ("LKA_STATE", "EPS_STATUS", 0),
     ("IPAS_STATE", "EPS_STATUS", 1),
     ("BRAKE_LIGHTS_ACC", "ESP_CONTROL", 0),
+	   ("SPORT_ON", "GEAR_PACKET", 0),
+    ("ECON_ON", "GEAR_PACKET", 0),
   ]
 
   checks = [
@@ -109,6 +111,21 @@ class CarState(CarStateBase):
     super().__init__(CP)
     can_define = CANDefine(DBC[CP.carFingerprint]['pt'])
     self.shifter_values = can_define.dv["GEAR_PACKET"]['GEAR']
+    try:
+      self.econ_on = cp.vl["GEAR_PACKET"]['ECON_ON']
+    except:
+      self.econ_on = 0
+    try:
+      self.sport_on = cp.vl["GEAR_PACKET"]['SPORT_ON']
+    except:
+      self.sport_on = 0
+    if self.sport_on == 1:
+      self.gasbuttonstatus = 1
+    if self.econ_on == 1:
+      self.gasbuttonstatus = 2
+    if self.sport_on == 0 and self.econ_on == 0:
+      self.gasbuttonstatus = 0
+
     self.angle_offset = 0.
     self.init_angle_offset = False
 
