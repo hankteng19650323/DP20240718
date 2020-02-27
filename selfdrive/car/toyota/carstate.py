@@ -37,7 +37,7 @@ def get_can_parser(CP):
     ("LKA_STATE", "EPS_STATUS", 0),
     ("IPAS_STATE", "EPS_STATUS", 1),
     ("BRAKE_LIGHTS_ACC", "ESP_CONTROL", 0),
-	   ("SPORT_ON", "GEAR_PACKET", 0),
+    ("SPORT_ON", "GEAR_PACKET", 0),
     ("ECON_ON", "GEAR_PACKET", 0),
   ]
 
