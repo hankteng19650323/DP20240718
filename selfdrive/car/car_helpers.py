@@ -1,5 +1,5 @@
 import os
-from common.params import Params
+from common.params import Params, put_nonblocking
 from common.basedir import BASEDIR
 from selfdrive.car.fingerprints import eliminate_incompatible_cars, all_known_cars
 from selfdrive.car.vin import get_vin, VIN_UNKNOWN
@@ -7,6 +7,9 @@ from selfdrive.car.fw_versions import get_fw_versions, match_fw_to_car
 from selfdrive.swaglog import cloudlog
 import cereal.messaging as messaging
 from selfdrive.car import gen_empty_fingerprint
+from common.dp import is_online
+import threading
+import selfdrive.crash as crash
 
 from cereal import car
 
@@ -151,8 +154,20 @@ def fingerprint(logcan, sendcan, has_relay):
     car_fingerprint = fixed_fingerprint
     source = car.CarParams.FingerprintSource.fixed
 
+  dragon_car_model = Params().get("DragonCustomModel", encoding="utf8")
+  if len(dragon_car_model):
+    car_fingerprint = dragon_car_model
+    source = car.CarParams.FingerprintSource.fixed
+
+  put_nonblocking("DragonCarModel", car_fingerprint)
   cloudlog.warning("fingerprinted %s", car_fingerprint)
   return car_fingerprint, finger, vin, car_fw, source
+
+
+def log_fingerprinted(candidate):
+  while True:
+    crash.capture_warning("fingerprinted %s" % candidate)
+    break
 
 
 def get_car(logcan, sendcan, has_relay=False):
@@ -161,6 +176,10 @@ def get_car(logcan, sendcan, has_relay=False):
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)
     candidate = "mock"
+
+  if is_online():
+    x = threading.Thread(target=log_fingerprinted, args=(candidate,))
+    x.start()
 
   CarInterface, CarController, CarState = interfaces[candidate]
   car_params = CarInterface.get_params(candidate, fingerprints, has_relay, car_fw)

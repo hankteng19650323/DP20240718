@@ -10,6 +10,7 @@ import subprocess
 import datetime
 import textwrap
 from selfdrive.swaglog import cloudlog, add_logentries_handler
+from selfdrive.dragonpilot.dragonconf import dragonpilot_set_params, run_patcher
 
 from common.basedir import BASEDIR, PARAMS
 from common.android import ANDROID
@@ -188,6 +189,10 @@ managed_processes = {
   "dmonitoringmodeld": ("selfdrive/modeld", ["./dmonitoringmodeld"]),
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "driverview": "selfdrive.controls.lib.driverview",
+  # dp
+  "dashcamd": "selfdrive.dragonpilot.dashcamd.dashcamd",
+  "shutdownd": "selfdrive.dragonpilot.shutdownd.shutdownd",
+  "appd": "selfdrive.dragonpilot.appd.appd",
 }
 
 daemon_processes = {
@@ -222,6 +227,8 @@ if ANDROID:
     'logcatd',
     'tombstoned',
     'updated',
+    'shutdownd',
+    'appd',
   ]
 
 car_started_processes = [
@@ -251,6 +258,7 @@ if ANDROID:
     'gpsd',
     'dmonitoringmodeld',
     'deleter',
+    'dashcamd',
   ]
 
 def register_managed_process(name, desc, car_started=False):
@@ -530,6 +538,7 @@ def uninstall():
   android.reboot(reason="recovery")
 
 def main():
+  run_patcher()
   os.environ['PARAMS_PATH'] = PARAMS
 
   # the flippening!
@@ -567,6 +576,9 @@ def main():
     if params.get(k) is None:
       params.put(k, v)
 
+  # dp
+  dragonpilot_set_params(params)
+
   # is this chffrplus?
   if os.getenv("PASSIVE") is not None:
     params.put("Passive", str(int(os.getenv("PASSIVE"))))
@@ -574,14 +586,24 @@ def main():
   if params.get("Passive") is None:
     raise Exception("Passive must be set to continue")
 
+  reg = False if params.get("DragonEnableRegistration", encoding='utf8') == "0" else True
+
   if ANDROID:
     update_apks()
-  manager_init()
+  manager_init(reg)
   manager_prepare(spinner)
   spinner.close()
 
   if os.getenv("PREPAREONLY") is not None:
     return
+
+  # dp
+  if params.get("DragonEnableLogger", encoding='utf8') == "0":
+    del managed_processes['loggerd']
+    del managed_processes['tombstoned']
+
+  if params.get("DragonEnableUploader", encoding='utf8') == "0":
+    del managed_processes['uploader']
 
   # SystemExit on sigterm
   signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(1))

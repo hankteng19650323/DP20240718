@@ -371,6 +371,7 @@ FW_VERSIONS = {
       b'37805-5AN-LJ20\x00\x00',
       b'37805-5AZ-E850\x00\x00',
       b'37805-5BB-L640\x00\x00',
+      b'37805-5AN-E410\x00\x00', # AlexNoop's Manual CIVIC_BOSCH
     ],
     (Ecu.transmission, 0x18da1ef1, None): [
       b'28101-5CG-A920\x00\x00',
@@ -389,6 +390,7 @@ FW_VERSIONS = {
       b'57114-TGG-A340\x00\x00',
       b'57114-TGL-G330\x00\x00',
       b'57114-TGG-C320\x00\x00',
+      b'57114-TGL-G130\x00\x00', # AlexNoop's Manual CIVIC_BOSCH
     ],
     (Ecu.eps, 0x18da30f1, None): [
       b'39990-TBA-C020\x00\x00',
@@ -397,11 +399,13 @@ FW_VERSIONS = {
       b'39990-TGG-A120\x00\x00',
       b'39990-TGL-E130\x00\x00',
       b'39990-TGG-A020\x00\x00',
+      b'39990-TGN-E120\x00\x00', # AlexNoop's Manual CIVIC_BOSCH
     ],
     (Ecu.srs, 0x18da53f1, None): [
       b'77959-TBA-A060\x00\x00',
       b'77959-TGG-A020\x00\x00',
       b'77959-TGG-G010\x00\x00',
+      b'77959-TGG-A020\x00\x00',
     ],
     (Ecu.combinationMeter, 0x18da60f1, None): [
       b'78109-TBA-A910\x00\x00',
@@ -412,21 +416,25 @@ FW_VERSIONS = {
       b'78109-TGG-A810\x00\x00',
       b'78109-TGG-A820\x00\x00',
       b'78109-TGL-G120\x00\x00',
+      b'78109-TGG-BA10\x00\x00', # AlexNoop's Manual CIVIC_BOSCH
     ],
     (Ecu.fwdRadar, 0x18dab0f1, None): [
       b'36802-TBA-A150\x00\x00',
       b'36802-TGG-A050\x00\x00',
       b'36802-TGL-G040\x00\x00',
       b'36802-TGG-A060\x00\x00',
+      b'36802-TGG-G040\x00\x00', # AlexNoop's Manual CIVIC_BOSCH
     ],
     (Ecu.fwdCamera, 0x18dab5f1, None): [
       b'36161-TBA-A130\x00\x00',
       b'36161-TGG-A060\x00\x00',
       b'36161-TGL-G050\x00\x00',
       b'36161-TGG-A080\x00\x00',
+      b'36161-TGG-G070\x00\x00', # AlexNoop's Manual CIVIC_BOSCH
     ],
     (Ecu.unknown, 0x18daeff1, None): [
       b'38897-TBA-A110\x00\x00',
+      b'38897-TBA-A020\x00\x00',
       b'38897-TBA-A020\x00\x00',
     ],
     (Ecu.gateway, 0x18daeff1, None): [

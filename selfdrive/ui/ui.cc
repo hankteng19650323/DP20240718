@@ -138,6 +138,39 @@ static void handle_driver_view_touch(UIState *s, int touch_x, int touch_y) {
   int err = write_db_value(NULL, "IsDriverViewEnabled", "0", 1);
 }
 
+static bool handle_dp_btn_touch(UIState *s, int touch_x, int touch_y) {
+  //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
+  if (s->awake && s->started) { //} && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
+    if ((int)s->dragon_df_mode > 0 && touch_x >= df_btn_x && touch_x <= (df_btn_x + df_btn_w) && touch_y >= df_btn_y && touch_y <= (df_btn_y + df_btn_h)) {
+      s->scene.uilayout_sidebarcollapsed = true;  // collapse sidebar when tapping df button
+      int val = s->dragon_df_mode;
+      val++;
+      if (val >= 4) {
+        val = 1;
+      }
+      s->dragon_df_mode = val;
+      char str[1];
+      sprintf(str, "%d", val);
+      write_db_value(NULL, "DragonDynamicFollow", str, 1);
+      return true;
+    }
+    if ((int)s->dragon_ap_mode > 0 && touch_x >= ap_btn_x && touch_x <= (ap_btn_x + ap_btn_w) && touch_y >= ap_btn_y && touch_y <= (ap_btn_y + ap_btn_h)) {
+      s->scene.uilayout_sidebarcollapsed = true;  // collapse sidebar when tapping ap button
+      int val = s->dragon_ap_mode;
+      val++;
+      if (val >= 4) {
+        val = 1;
+      }
+      s->dragon_ap_mode = val;
+      char str[1];
+      sprintf(str, "%d", val);
+      write_db_value(NULL, "DragonAccelProfile", str, 1);
+      return true;
+    }
+  }
+  return false;
+}
+
 static void handle_vision_touch(UIState *s, int touch_x, int touch_y) {
   if (s->started && (touch_x >= s->scene.ui_viz_rx - bdr_s)
     && (s->active_app != cereal_UiLayoutState_App_settings)) {
@@ -237,6 +270,7 @@ static void ui_init(UIState *s) {
   s->driverstate_sock = SubSocket::create(s->ctx, "driverState");
   s->dmonitoring_sock = SubSocket::create(s->ctx, "dMonitoringState");
   s->offroad_sock = PubSocket::create(s->ctx, "offroadLayout");
+  s->carstate_sock = SubSocket::create(s->ctx, "carState");
 
   assert(s->model_sock != NULL);
   assert(s->controlsstate_sock != NULL);
@@ -249,6 +283,7 @@ static void ui_init(UIState *s) {
   assert(s->driverstate_sock != NULL);
   assert(s->dmonitoring_sock != NULL);
   assert(s->offroad_sock != NULL);
+  assert(s->carstate_sock != NULL);
 
   s->poller = Poller::create({
                               s->model_sock,
@@ -260,7 +295,8 @@ static void ui_init(UIState *s) {
                               s->health_sock,
                               s->ubloxgnss_sock,
                               s->driverstate_sock,
-                              s->dmonitoring_sock
+                              s->dmonitoring_sock,
+                              s->carstate_sock
                              });
 
 #ifdef SHOW_SPEEDLIMIT
@@ -333,10 +369,72 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
   read_param_bool(&s->longitudinal_control, "LongitudinalControl");
   read_param_bool(&s->limit_set_speed, "LimitSetSpeed");
 
+  // dp
+  read_param_float(&s->dragon_ui_volume_boost, "DragonUIVolumeBoost");
+  read_param_bool(&s->dragon_waze_mode, "DragonWazeMode");
+  read_param_bool(&s->dragon_updating, "DragonUpdating");
+  read_param_uint64(&s->dragon_df_mode, "DragonDynamicFollow");
+  read_param_uint64(&s->dragon_ap_mode, "DragonAccelProfile");
+  if (s->dragon_waze_mode) {
+    s->dragon_ui_speed = false;
+    s->dragon_ui_event = false;
+    s->dragon_ui_maxspeed = false;
+    s->dragon_ui_face = false;
+    s->dragon_ui_dev = false;
+    s->dragon_ui_dev_mini = false;
+    s->dragon_enable_dashcam = false;
+    s->dragon_driving_ui = false;
+    s->dragon_ui_lane = false;
+    s->dragon_ui_lead = false;
+    s->dragon_ui_path = false;
+    s->dragon_ui_blinker = false;
+    s->dragon_ui_dm_view = false;
+  } else {
+    read_param_bool(&s->dragon_enable_dm, "DragonEnableDriverMonitoring");
+    if (!s->dragon_enable_dm) {
+      s->dragon_ui_face = false;
+    } else {
+      read_param_bool(&s->dragon_ui_face, "DragonUIFace");
+    }
+    read_param_bool(&s->dragon_ui_speed, "DragonUISpeed");
+    read_param_bool(&s->dragon_ui_event, "DragonUIEvent");
+    read_param_bool(&s->dragon_ui_maxspeed, "DragonUIMaxSpeed");
+    read_param_bool(&s->dragon_ui_dev, "DragonUIDev");
+    read_param_bool(&s->dragon_ui_dev_mini, "DragonUIDevMini");
+    read_param_bool(&s->dragon_enable_dashcam, "DragonEnableDashcam");
+    read_param_bool(&s->dragon_driving_ui, "DragonDrivingUI");
+    read_param_bool(&s->dragon_ui_lane, "DragonUILane");
+    read_param_bool(&s->dragon_ui_lead, "DragonUILead");
+    read_param_bool(&s->dragon_ui_path, "DragonUIPath");
+    read_param_bool(&s->dragon_ui_blinker, "DragonUIBlinker");
+    read_param_bool(&s->dragon_ui_dm_view, "DragonUIDMView");
+  }
+
   // Set offsets so params don't get read at the same time
   s->longitudinal_control_timeout = UI_FREQ / 3;
   s->is_metric_timeout = UI_FREQ / 2;
   s->limit_set_speed_timeout = UI_FREQ;
+
+  // dp
+  s->dragon_ui_speed_timeout = UI_FREQ * 5.1;
+  s->dragon_ui_event_timeout = UI_FREQ * 5.2;
+  s->dragon_ui_maxspeed_timeout = UI_FREQ * 5.3;
+  s->dragon_enable_dm_timeout = UI_FREQ * 5.4;
+  s->dragon_ui_face_timeout = UI_FREQ * 5.4;
+  s->dragon_ui_dev_timeout = UI_FREQ * 5.5;
+  s->dragon_ui_dev_mini_timeout = UI_FREQ * 5.6;
+  s->dragon_enable_dashcam_timeout = UI_FREQ * 5.7;
+  s->dragon_ui_volume_boost_timeout = UI_FREQ * 5.8;
+  s->dragon_driving_ui_timeout = UI_FREQ * 5.9;
+  s->dragon_ui_lane_timeout = UI_FREQ * 6.0;
+  s->dragon_ui_lead_timeout = UI_FREQ * 6.1;
+  s->dragon_ui_path_timeout = UI_FREQ * 6.2;
+  s->dragon_ui_blinker_timeout = UI_FREQ * 6.3;
+  s->dragon_waze_mode_timeout = UI_FREQ * 6.4;
+  s->dragon_ui_dm_view_timeout = UI_FREQ * 6.5;
+  s->dragon_updating_timeout = UI_FREQ * 10;
+  s->dragon_df_mode_timeout = UI_FREQ * 5.0;
+  s->dragon_ap_mode_timeout = UI_FREQ * 5.0;
 }
 
 static PathData read_path(cereal_ModelData_PathData_ptr pathp) {
@@ -417,6 +515,10 @@ void handle_message(UIState *s, Message * msg) {
     s->scene.monitoring_active = datad.driverMonitoringOn;
 
     s->scene.decel_for_model = datad.decelForModel;
+
+    // dp - steer data
+    s->scene.angleSteers = datad.angleSteers;
+    s->scene.angleSteersDes = datad.angleSteersDes;
 
     if (datad.alertSound != cereal_CarControl_HUDControl_AudibleAlert_none && datad.alertSound != s->alert_sound) {
       if (s->alert_sound != cereal_CarControl_HUDControl_AudibleAlert_none) {
@@ -556,7 +658,8 @@ void handle_message(UIState *s, Message * msg) {
     s->scene.paTemp = datad.pa0;
 
     s->thermal_started = datad.started;
-
+    // dp - ipAddr
+    snprintf(s->scene.ipAddr, sizeof(s->scene.ipAddr), "%s", datad.ipAddr.str);
   } else if (eventd.which == cereal_Event_ubloxGnss) {
     struct cereal_UbloxGnss datad;
     cereal_read_UbloxGnss(&datad, eventd.ubloxGnss);
@@ -588,6 +691,16 @@ void handle_message(UIState *s, Message * msg) {
     s->scene.is_rhd = datad.isRHD;
     s->scene.awareness_status = datad.awarenessStatus;
     s->preview_started = datad.isPreview;
+  } else if (eventd.which == cereal_Event_carState) {
+    struct cereal_CarState datad;
+    cereal_read_CarState(&datad, eventd.carState);
+
+    if(s->scene.leftBlinker!=datad.leftBlinker || s->scene.rightBlinker!=datad.rightBlinker) {
+      s->scene.blinker_blinkingrate = 100;
+    }
+    s->scene.leftBlinker = datad.leftBlinker;
+    s->scene.rightBlinker = datad.rightBlinker;
+    s->scene.brakeLights = datad.brakeLights;
   }
 
   s->started = s->thermal_started || s->preview_started ;
@@ -987,7 +1100,9 @@ int main(int argc, char* argv[]) {
   s->scene.satelliteCount = -1;
   s->started = false;
   s->vision_seen = false;
-
+  // dp
+  s->scene.alert_rate = 0;
+  s->scene.alert_type = 1;
   while (!do_exit) {
     bool should_swap = false;
     if (!s->started) {
@@ -1011,13 +1126,20 @@ int main(int argc, char* argv[]) {
     s->scene.ui_viz_rw = hasSidebar ? box_w : (box_w + sbr_w - (bdr_s * 2));
     s->scene.ui_viz_ro = hasSidebar ? -(sbr_w - 6 * bdr_s) : 0;
 
-    // poll for touch events
-    int touch_x = -1, touch_y = -1;
-    int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
-    if (touched == 1) {
-      set_awake(s, true);
-      handle_sidebar_touch(s, touch_x, touch_y);
-      handle_vision_touch(s, touch_x, touch_y);
+    if (s->vision_connected && s->dragon_waze_mode) {
+      // always collapsed sidebar when vision is connect and in waze mode
+      s->scene.uilayout_sidebarcollapsed = true;
+    } else {
+      // poll for touch events
+      int touch_x = -1, touch_y = -1;
+      int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
+      if (touched == 1) {
+        set_awake(s, true);
+        if (!handle_dp_btn_touch(s, touch_x, touch_y)) {
+          handle_sidebar_touch(s, touch_x, touch_y);
+          handle_vision_touch(s, touch_x, touch_y);
+        }
+      }
     }
 
     if (!s->started) {
@@ -1068,6 +1190,10 @@ int main(int argc, char* argv[]) {
       s->volume_timeout--;
     } else {
       int volume = fmin(MAX_VOLUME, MIN_VOLUME + s->scene.v_ego / 5);  // up one notch every 5 m/s
+      if (s->dragon_ui_volume_boost > 0 || s->dragon_ui_volume_boost < 0) {
+        volume = volume * (1 + s->dragon_ui_volume_boost /100);
+        volume = volume > MAX_VOLUME? MAX_VOLUME : volume;
+      }
       set_volume(volume);
       s->volume_timeout = 5 * UI_FREQ;
     }
@@ -1114,6 +1240,48 @@ int main(int argc, char* argv[]) {
       s->scene.athenaStatus = NET_ERROR;
     }
     update_offroad_layout_timeout(s, &s->offroad_layout_timeout);
+
+    // dp
+    read_param_float_timeout(&s->dragon_ui_volume_boost, "DragonUIVolumeBoost", &s->dragon_ui_volume_boost_timeout);
+    read_param_bool_timeout(&s->dragon_waze_mode, "DragonWazeMode", &s->dragon_waze_mode_timeout);
+    read_param_bool_timeout(&s->dragon_updating, "DragonUpdating", &s->dragon_updating_timeout);
+    read_param_uint64_timeout(&s->dragon_df_mode, "DragonDynamicFollow", &s->dragon_df_mode_timeout);
+    read_param_uint64_timeout(&s->dragon_ap_mode, "DragonAccelProfile", &s->dragon_ap_mode_timeout);
+
+    if (s->dragon_waze_mode) {
+      s->dragon_ui_speed = false;
+      s->dragon_ui_event = false;
+      s->dragon_ui_maxspeed = false;
+      s->dragon_ui_face = false;
+      s->dragon_ui_dev = false;
+      s->dragon_ui_dev_mini = false;
+      s->dragon_enable_dashcam = false;
+      s->dragon_driving_ui = false;
+      s->dragon_ui_lane = false;
+      s->dragon_ui_lead = false;
+      s->dragon_ui_path = false;
+      s->dragon_ui_blinker = false;
+      s->dragon_ui_dm_view = false;
+    } else {
+      read_param_bool_timeout(&s->dragon_enable_dm, "DragonEnableDriverMonitoring", &s->dragon_enable_dm_timeout);
+      if (!s->dragon_enable_dm) {
+        s->dragon_ui_face = false;
+      } else {
+        read_param_bool_timeout(&s->dragon_ui_face, "DragonUIFace", &s->dragon_ui_face_timeout);
+      }
+      read_param_bool_timeout(&s->dragon_ui_speed, "DragonUISpeed", &s->dragon_ui_speed_timeout);
+      read_param_bool_timeout(&s->dragon_ui_event, "DragonUIEvent", &s->dragon_ui_event_timeout);
+      read_param_bool_timeout(&s->dragon_ui_maxspeed, "DragonUIMaxSpeed", &s->dragon_ui_maxspeed_timeout);
+      read_param_bool_timeout(&s->dragon_ui_dev, "DragonUIDev", &s->dragon_ui_dev_timeout);
+      read_param_bool_timeout(&s->dragon_ui_dev_mini, "DragonUIDevMini", &s->dragon_ui_dev_mini_timeout);
+      read_param_bool_timeout(&s->dragon_enable_dashcam, "DragonEnableDashcam", &s->dragon_enable_dashcam_timeout);
+      read_param_bool_timeout(&s->dragon_driving_ui, "DragonDrivingUI", &s->dragon_driving_ui_timeout);
+      read_param_bool_timeout(&s->dragon_ui_lane, "DragonUILane", &s->dragon_ui_lane_timeout);
+      read_param_bool_timeout(&s->dragon_ui_lead, "DragonUILead", &s->dragon_ui_lead_timeout);
+      read_param_bool_timeout(&s->dragon_ui_path, "DragonUIPath", &s->dragon_ui_path_timeout);
+      read_param_bool_timeout(&s->dragon_ui_blinker, "DragonUIBlinker", &s->dragon_ui_blinker_timeout);
+      read_param_bool_timeout(&s->dragon_ui_dm_view, "DragonUIDMView", &s->dragon_ui_dm_view_timeout);
+    }
 
     pthread_mutex_unlock(&s->lock);
 
