@@ -149,7 +149,7 @@ class LongitudinalMpc():
     x_vel = [0.0, 1.8627, 3.7253, 5.588, 7.4507, 9.3133, 11.5598, 13.645, 22.352, 31.2928, 33.528, 35.7632, 40.2336]  # velocities
     profile_mod_x = [2.2352, 13.4112, 24.5872, 35.7632]  # profile mod speeds, mph: [5., 30., 55., 80.]
     if self.df_profile == DF_PROFILE_LONG:
-      y_dist = [1.3847, 1.3946, 1.4078, 1.4243, 1.4507, 1.4837, 1.5327, 1.553, 1.581, 1.617, 1.653, 1.687, 1.74]  # TRs
+      y_dist = [1.2134, 1.2946, 1.3578, 1.4043, 1.4507, 1.4937, 1.5327, 1.563, 1.661, 1.7721, 1.7965, 1.8231, 1.88]  # TRs
       profile_mod_pos = [0.99, 0.9025, 0.815, 0.55]
       profile_mod_neg = [1.0, 1.18, 1.382, 1.787]
     elif self.df_profile == DF_PROFILE_SHORT:  # for in congested traffic
