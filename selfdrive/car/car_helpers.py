@@ -11,18 +11,23 @@ from common.dp import is_online
 import threading
 import selfdrive.crash as crash
 
-from cereal import car
+from cereal import car, log
+EventName = car.CarEvent.EventName
+HwType = log.HealthData.HwType
 
-def get_startup_alert(car_recognized, controller_available):
-  alert = 'startup'
+
+def get_startup_event(car_recognized, controller_available, hw_type):
+  event = EventName.startup
   if Params().get("GitRemote", encoding="utf8") in ['git@github.com:commaai/openpilot.git', 'https://github.com/commaai/openpilot.git']:
     if Params().get("GitBranch", encoding="utf8") not in ['devel', 'release2-staging', 'dashcam-staging', 'release2', 'dashcam']:
-      alert = 'startupMaster'
+      event = EventName.startupMaster
   if not car_recognized:
-    alert = 'startupNoCar'
+    event = EventName.startupNoCar
   elif car_recognized and not controller_available:
-    alert = 'startupNoControl'
-  return alert
+    event = EventName.startupNoControl
+  elif hw_type == HwType.whitePanda:
+    event = EventName.startupWhitePanda
+  return event
 
 
 def load_interfaces(brand_names):
@@ -75,6 +80,7 @@ def only_toyota_left(candidate_cars):
 # **** for use live only ****
 def fingerprint(logcan, sendcan, has_relay):
   fixed_fingerprint = os.environ.get('FINGERPRINT', "")
+  skip_fw_query = os.environ.get('SKIP_FW_QUERY', False)
   # dp
   dragon_car_model = Params().get("DragonCustomModel", encoding="utf8")
   has_dragon_car_model = True if len(dragon_car_model) else False
@@ -83,7 +89,7 @@ def fingerprint(logcan, sendcan, has_relay):
   # for other purposes.
   has_relay = False if has_dragon_car_model else has_relay
 
-  if has_relay and not fixed_fingerprint:
+  if has_relay and not fixed_fingerprint and not skip_fw_query:
     # Vin query only reliably works thorugh OBDII
     bus = 1
 
