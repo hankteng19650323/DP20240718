@@ -182,7 +182,7 @@ def confd_thread():
           pass
     '''
     ===================================================
-    auto shutdown every 30 secs
+    auto shutdown check every 30 secs
     ===================================================
     '''
     autoshutdown = msg.dragonConf.dpAutoShutdown
