@@ -199,12 +199,12 @@ def confd_thread():
           pass
     '''
     ===================================================
-    auto shutdown check every 30 secs
+    auto shutdown
     ===================================================
     '''
     autoshutdown = msg.dragonConf.dpAutoShutdown
-    if autoshutdown and frame % 60 == 0:
-      sec = msg.dragonConf.dpAutoShutdownIn * 60
+    if autoshutdown:
+      sec = msg.dragonConf.dpAutoShutdownIn * 60 * 2
       if last_autoshutdown != autoshutdown or last_sec != sec or started or online:
         autoshutdown_frame = frame + sec
       if not started and not online and sec > 0 and frame >= autoshutdown_frame:
