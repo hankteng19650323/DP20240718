@@ -88,30 +88,30 @@ def confd_thread():
     push param vals to message
     ===================================================
     '''
-    for conf in confs:
-      conf_type = conf.get('conf_type')
-      if update_params and 'param' in conf_type and 'struct' in conf_type:
-        update_this_conf = True
+    if update_params:
+      for conf in confs:
+        conf_type = conf.get('conf_type')
+        if 'param' in conf_type and 'struct' in conf_type:
+          update_this_conf = True
 
-        update_once = conf.get('update_once')
-        if update_once is not None and update_once is True and frame > 0:
-          update_this_conf = False
+          update_once = conf.get('update_once')
+          if update_once is not None and update_once is True and frame > 0:
+            update_this_conf = False
 
-        if update_this_conf:
-          dependencies = conf.get('depends')
-          # if has dependency and the depend param val is not in depend_vals, we dont update that conf val
-          # this should reduce chance of reading all params
-          if dependencies is not None:
-            for dependency in dependencies:
-              if getattr(msg.dragonConf, get_struct_name(dependency['name'])) not in dependency['vals']:
-                update_this_conf = False
-                break
-        if update_this_conf:
-          val = params.get(conf['name'], encoding='utf8')
-          if val is not None:
-            val = val.rstrip('\x00')
-          setattr(msg.dragonConf, get_struct_name(conf['name']), to_struct_val(conf['name'], val))
+          if update_this_conf:
+            dependencies = conf.get('depends')
+            # if has dependency and the depend param val is not in depend_vals, we dont update that conf val
+            # this should reduce chance of reading all params
+            if dependencies is not None:
+              for dependency in dependencies:
+                if getattr(msg.dragonConf, get_struct_name(dependency['name'])) not in dependency['vals']:
+                  update_this_conf = False
 
+          if update_this_conf:
+            val = params.get(conf['name'], encoding='utf8')
+            if val is not None:
+              val = val.rstrip('\x00')
+            setattr(msg.dragonConf, get_struct_name(conf['name']), to_struct_val(conf['name'], val))
     '''
     ===================================================
     push ip addr every 10 secs to message
@@ -130,9 +130,7 @@ def confd_thread():
     push is_updating status every 5 secs to message
     ===================================================
     '''
-    if frame == 0:
-      put_nonblocking('dp_is_updating', '0')
-    elif frame % 10 == 0:
+    if frame % 10 == 0:
       val = params.get('dp_is_updating', encoding='utf8').rstrip('\x00')
       setattr(msg.dragonConf, get_struct_name('dp_is_updating'), to_struct_val('dp_is_updating', val))
     '''
@@ -142,6 +140,7 @@ def confd_thread():
     '''
     if frame == 0:
       setattr(msg.dragonConf, get_struct_name('dp_locale'), locale)
+      put_nonblocking('dp_is_updating', '0')
     '''
     ===================================================
     we can have some logic here
@@ -181,9 +180,9 @@ def confd_thread():
     ===================================================    
     '''
     dashcam = msg.dragonConf.dpDashcam
-    if dashcam:
+    if frame % 2 == 0 and dashcam:
       if started:
-        if frame >= dashcam_next_frame - 1:
+        if frame >= dashcam_next_frame - 2:
           now = datetime.datetime.now()
           file_name = now.strftime("%Y-%m-%d_%H-%M-%S")
           os.system("screenrecord --bit-rate %s --time-limit %s %s%s.mp4 &" % (DASHCAM_BIT_RATES, DASHCAM_DURATION, DASHCAM_VIDEOS_PATH, file_name))
@@ -191,7 +190,7 @@ def confd_thread():
       else:
         dashcam_next_frame = 0
 
-      if free_space < DASHCAM_FREESPACE_LIMIT:
+      if frame % 120 == 0 and free_space < DASHCAM_FREESPACE_LIMIT:
         try:
           files = [f for f in sorted(os.listdir(DASHCAM_VIDEOS_PATH)) if os.path.isfile(DASHCAM_VIDEOS_PATH + f)]
           os.system("rm -fr %s &" % (DASHCAM_VIDEOS_PATH + files[0]))
@@ -203,7 +202,7 @@ def confd_thread():
     ===================================================
     '''
     autoshutdown = msg.dragonConf.dpAutoShutdown
-    if autoshutdown:
+    if frame % 20 == 0 and autoshutdown:
       sec = msg.dragonConf.dpAutoShutdownIn * 60 * 2
       if last_autoshutdown != autoshutdown or last_sec != sec or started or online:
         autoshutdown_frame = frame + sec
