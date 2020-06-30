@@ -311,7 +311,6 @@ def attempt_update():
     # Make sure the validity flag lands on disk LAST, only when the local git
     # repo and OP install are in a consistent state.
     set_consistent_flag()
-    run(['/data/data/com.termux/files/usr/bin/python', OVERLAY_MERGED + '/dragonpilot/prelaunch.py', OVERLAY_MERGED])
 
     cloudlog.info("update successful!")
   else:

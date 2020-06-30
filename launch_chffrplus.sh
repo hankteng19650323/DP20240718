@@ -94,6 +94,8 @@ function launch {
   ln -sfn $(pwd) /data/pythonpath
   export PYTHONPATH="$PWD"
 
+  /data/data/com.termux/files/usr/bin/python /data/openpilot/dragonpilot/prelaunch.py /data/openpilot
+
   # start manager
   cd selfdrive
   ./manager.py
