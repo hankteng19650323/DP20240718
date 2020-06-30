@@ -2122,11 +2122,12 @@ struct DragonConf {
   dpToyotaLdw @60 :Bool;
   dpToyotaSng @61 :Bool;
   dpIpAddr @62 :Text;
-  dpFullSpeedFan @63 :Bool;
-  dpCameraOffset @64 :Int8;
-  dpLocale @65 :Text;
-  dpChargingCtrl @66 :Bool;
-  dpChargingAt @67 :UInt8;
-  dpDischargingAt @68 :UInt8;
-  dpIsUpdating @69 :Bool;
+  dpCameraOffset @63 :Int8;
+  dpLocale @64 :Text;
+  dpChargingCtrl @65 :Bool;
+  dpChargingAt @66 :UInt8;
+  dpDischargingAt @67 :UInt8;
+  dpIsUpdating @68 :Bool;
+  dpThermalStarted @69 :Bool;
+  dpThermalOverheat @70 :Bool;
 }

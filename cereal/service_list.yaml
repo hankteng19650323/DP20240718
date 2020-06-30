@@ -78,7 +78,7 @@ frontFrame: [8072, true, 10.]
 dMonitoringState: [8073, true, 5., 1]
 offroadLayout: [8074, false, 0.]
 
-dragonConf: [8075, false, 1.]
+dragonConf: [8075, false, 2.]
 
 testModel: [8040, false, 0.]
 testLiveLocation: [8045, false, 0.]

@@ -12,6 +12,7 @@ import re
 import os
 from common.dp_common import is_online
 from common.dp_conf import get_struct_name
+from common.realtime import sec_since_boot
 
 is_online = is_online()
 auto_update = params.get("dp_app_auto_update", encoding='utf8') == "1"
@@ -329,29 +330,36 @@ def main():
   apps = []
 
   last_started = False
-  sm = messaging.SubMaster(['thermal', 'dragonConf'])
+  sm = messaging.SubMaster(['dragonConf'])
 
   frame = 0
   start_delay = None
   stop_delay = None
   allow_auto_run = True
-  last_thermal_status = None
+
+  last_overheat = False
   init_done = False
+  dragon_conf_msg = None
 
   while 1: #has_enabled_apps:
+    start_sec = sec_since_boot()
     if not init_done:
       if frame >= 10:
         init_apps(apps)
+        sm.update()
+        dragon_conf_msg = sm['dragonConf']
         init_done = True
     else:
       sm.update(1000)
-      if not sm.updated['dragonConf']:
+      if sm.updated['dragonConf']:
+        dragon_conf_msg = sm['dragonConf']
+      else:
         continue
       enabled_apps = []
       has_fullscreen_apps = False
       for app in apps:
         # read params loop
-        app.read_params(sm['dragonConf'])
+        app.read_params(dragon_conf_msg)
         if app.last_is_enabled and not app.is_enabled and app.is_running:
           app.kill(True)
 
@@ -365,7 +373,7 @@ def main():
 
           enabled_apps.append(app)
 
-      started = sm['thermal'].started
+      started = dragon_conf_msg.dpThermalStarted
       # when car is running
       if started:
         # we run service apps and kill all util apps
@@ -382,16 +390,15 @@ def main():
         if start_delay is None:
           start_delay = frame + 5
 
-        thermal_status = sm['thermal'].thermalStatus
-        if thermal_status <= ThermalStatus.yellow:
+        if not dragon_conf_msg.dpThermalOverheat:
           allow_auto_run = True
           # when temp reduce from red to yellow, we add start up delay as well
           # so apps will not start up immediately
-          if last_thermal_status == ThermalStatus.red:
+          if last_overheat:
             start_delay = frame + 60
-        elif thermal_status >= ThermalStatus.red:
+        else:
           allow_auto_run = False
-        last_thermal_status = thermal_status
+        last_overheat = dragon_conf_msg.dpThermalOverheat
 
         # only run apps that's not manually ctrled
         for app in enabled_apps:
@@ -425,7 +432,9 @@ def main():
 
       last_started = started
     frame += 1
-    time.sleep(1)
+    sleep = 1 - (sec_since_boot() - start_sec)
+    if sleep > 0:
+      time.sleep(sleep)
 
 def system(cmd):
   try:

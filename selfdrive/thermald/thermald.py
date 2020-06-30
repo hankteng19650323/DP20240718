@@ -196,8 +196,12 @@ def thermald_thread():
     setup_eon_fan()
     handle_fan = handle_fan_eon
 
+  dp_temp_monitor = True
+
   while 1:
     sm.update()
+    if sm.updated['dragonConf']:
+      dp_temp_monitor = sm['dragonConf'].dpTempMonitor
     health = messaging.recv_sock(health_sock, wait=True)
     location = messaging.recv_sock(location_sock)
     location = location.gpsLocation if location else None
@@ -296,7 +300,7 @@ def thermald_thread():
       # all good
       thermal_status = ThermalStatus.green
 
-    if not sm['dragonConf'].dpTempMonitor and thermal_status in [ThermalStatus.yellow, ThermalStatus.red, ThermalStatus.danger]:
+    if not dp_temp_monitor and thermal_status in [ThermalStatus.yellow, ThermalStatus.red, ThermalStatus.danger]:
       thermal_status = ThermalStatus.yellow
     # **** starting logic ****
     time_valid = True

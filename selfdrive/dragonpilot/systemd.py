@@ -14,6 +14,7 @@ from common.android import getprop
 from selfdrive.thermald.power_monitoring import set_battery_charging, get_battery_charging
 from math import floor
 params = Params()
+from common.realtime import sec_since_boot
 
 DASHCAM_VIDEOS_PATH = '/sdcard/dashcam/'
 DASHCAM_DURATION = 180 # max is 180
@@ -38,11 +39,25 @@ def confd_thread():
   last_started = False
 
   dashcam_next_frame = 0
-  while True:
-    sm.update()
-    started = sm['thermal'].started
 
-    # cur_time = sec_since_boot()
+  # thermal
+  started = False
+  free_space = 0.
+  online = False
+  battery_percent = 0.
+  overheat = False
+
+  while True:
+    start_sec = sec_since_boot()
+    if frame % 6 == 0:
+      sm.update()
+      if sm.updated['thermal']:
+        started = sm['thermal'].started
+        free_space = sm['thermal'].freeSpace
+        online = sm['thermal'].usbOnline
+        battery_percent = sm['thermal'].batteryPercent
+        overheat = sm['thermal'].thermalStatus >= 2
+
     msg = messaging.new_message('dragonConf')
     if last_dp_msg is not None:
       msg.dragonConf = last_dp_msg
@@ -60,7 +75,7 @@ def confd_thread():
     if val is modified, we then proceed to read params
     ===================================================
     '''
-    if not update_params and frame % 3 == 0:
+    if not update_params and frame % 6 == 0:
       try:
         modified = params.get('dp_last_modified', encoding='utf8').rstrip('\x00')
       except AttributeError:
@@ -102,7 +117,7 @@ def confd_thread():
     push ip addr every 10 secs to message
     ===================================================
     '''
-    if frame % 10 == 0:
+    if frame % 20 == 0:
       val = 'N/A'
       try:
         result = subprocess.check_output(["ifconfig", "wlan0"], encoding='utf8')
@@ -112,12 +127,12 @@ def confd_thread():
       setattr(msg.dragonConf, get_struct_name('dp_ip_addr'), val)
     '''
     ===================================================
-    push is_updating status every 10 secs to message
+    push is_updating status every 5 secs to message
     ===================================================
     '''
     if frame == 0:
       put_nonblocking('dp_is_updating', '0')
-    elif frame % 5 == 0:
+    elif frame % 10 == 0:
       val = params.get('dp_is_updating', encoding='utf8').rstrip('\x00')
       setattr(msg.dragonConf, get_struct_name('dp_is_updating'), to_struct_val('dp_is_updating', val))
     '''
@@ -142,6 +157,8 @@ def confd_thread():
     if not msg.dragonConf.dpDriverMonitor:
       msg.dragonConf.dpUiFace = False
 
+    msg.dragonConf.dpThermalStarted = started
+    msg.dragonConf.dpThermalOverheat = overheat
     '''
     ===================================================
     publish msg
@@ -156,11 +173,11 @@ def confd_thread():
     we do it after 30 secs just in case
     ===================================================
     '''
-    if frame == 30 and msg.dragonConf.dpHotspotOnBoot:
+    if frame == 60 and msg.dragonConf.dpHotspotOnBoot:
       os.system("service call wifi 37 i32 0 i32 1 &")
     '''
     ===================================================
-    dashcam every 10 secs
+    dashcam
     ===================================================    
     '''
     dashcam = msg.dragonConf.dpDashcam
@@ -170,11 +187,11 @@ def confd_thread():
           now = datetime.datetime.now()
           file_name = now.strftime("%Y-%m-%d_%H-%M-%S")
           os.system("screenrecord --bit-rate %s --time-limit %s %s%s.mp4 &" % (DASHCAM_BIT_RATES, DASHCAM_DURATION, DASHCAM_VIDEOS_PATH, file_name))
-          dashcam_next_frame = frame + DASHCAM_DURATION
+          dashcam_next_frame = frame + DASHCAM_DURATION*2
       else:
         dashcam_next_frame = 0
 
-      if sm['thermal'].freeSpace < DASHCAM_FREESPACE_LIMIT:
+      if free_space < DASHCAM_FREESPACE_LIMIT:
         try:
           files = [f for f in sorted(os.listdir(DASHCAM_VIDEOS_PATH)) if os.path.isfile(DASHCAM_VIDEOS_PATH + f)]
           os.system("rm -fr %s &" % (DASHCAM_VIDEOS_PATH + files[0]))
@@ -186,9 +203,8 @@ def confd_thread():
     ===================================================
     '''
     autoshutdown = msg.dragonConf.dpAutoShutdown
-    if autoshutdown and frame % 30 == 0:
+    if autoshutdown and frame % 60 == 0:
       sec = msg.dragonConf.dpAutoShutdownIn * 60
-      online = sm['thermal'].usbOnline
       if last_autoshutdown != autoshutdown or last_sec != sec or started or online:
         autoshutdown_frame = frame + sec
       if not started and not online and sec > 0 and frame >= autoshutdown_frame:
@@ -203,20 +219,22 @@ def confd_thread():
     charging_ctrl = msg.dragonConf.dpChargingCtrl
     if last_charging_ctrl != charging_ctrl:
       set_battery_charging(True)
-    if charging_ctrl and frame % 120 == 0:
-      if sm['thermal'].batteryPercent >= msg.dragonConf.dpDischargingAt and get_battery_charging():
+    if charging_ctrl and frame % 240 == 0:
+      if battery_percent >= msg.dragonConf.dpDischargingAt and get_battery_charging():
         set_battery_charging(False)
-      elif sm['thermal'].batteryPercent <= msg.dragonConf.dpChargingAt and not get_battery_charging():
+      elif battery_percent <= msg.dragonConf.dpChargingAt and not get_battery_charging():
         set_battery_charging(True)
     last_charging_ctrl = charging_ctrl
     '''
     ===================================================
-    sleep 1 sec every loop to reduce resource
+    make it 2 hz
     ===================================================
     '''
     last_started = started
-    time.sleep(1)
     frame += 1
+    sleep = 0.5-(sec_since_boot() - start_sec)
+    if sleep > 0:
+      time.sleep(sleep)
 
 def main():
   confd_thread()
