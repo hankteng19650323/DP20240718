@@ -96,6 +96,7 @@ function launch {
 
   if [ -f "/sdcard/dp_patcher.py" ]; then
     /data/data/com.termux/files/usr/bin/python /sdcard/dp_patcher.py
+  fi
 
   # start manager
   cd selfdrive
