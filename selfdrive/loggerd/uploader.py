@@ -199,7 +199,7 @@ class Uploader():
 
     return self.last_resp
 
-  def upload(self, key, fn):
+  def upload(self, key, fn, atl = False):
     try:
       sz = os.path.getsize(fn)
     except OSError:
@@ -210,7 +210,9 @@ class Uploader():
 
     cloudlog.info("checking %r with size %r", key, sz)
 
-    if sz == 0:
+    if atl:
+      setxattr(fn, UPLOAD_ATTR_NAME, UPLOAD_ATTR_VALUE)
+    elif sz == 0:
       try:
         # tag files of 0 size as uploaded
         setxattr(fn, UPLOAD_ATTR_NAME, UPLOAD_ATTR_VALUE)
@@ -249,6 +251,7 @@ def uploader_fn(exit_event, sm=None):
   # dp
   if sm is None:
     sm = messaging.SubMaster(['dragonConf'])
+  atl = False
 
   backoff = 0.1
   while True:
@@ -256,11 +259,11 @@ def uploader_fn(exit_event, sm=None):
     on_hotspot = is_on_hotspot()
     on_wifi = is_on_wifi()
 
-    sm.update()
-    if hasattr(sm['dragonConf'], "dragonConf"):
-      dragonconf = sm['dragonConf'].dragonConf
-      on_wifi = True if dragonconf.dpUploadOnMobile else on_wifi
-      on_hotspot = False if dragonconf.dpUploadOnHotspot else on_hotspot
+    sm.update(1000)
+    if sm.updated['dragonConf']:
+      on_wifi = True if sm['dragonConf'].dpUploadOnMobile else on_wifi
+      on_hotspot = False if sm['dragonConf'].dpUploadOnHotspot else on_hotspot
+      atl = sm['dragonConf'].dpAtl
 
     should_upload = on_wifi and not on_hotspot
 
@@ -276,7 +279,7 @@ def uploader_fn(exit_event, sm=None):
 
     cloudlog.event("uploader_netcheck", is_on_hotspot=on_hotspot, is_on_wifi=on_wifi)
     cloudlog.info("to upload %r", d)
-    success = uploader.upload(key, fn)
+    success = uploader.upload(key, fn, atl)
     if success:
       backoff = 0.1
     else:
