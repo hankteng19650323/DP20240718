@@ -5,7 +5,10 @@ from common.params import Params
 params = Params()
 
 def is_online():
-  return not subprocess.call(["ping", "-W", "4", "-c", "1", "117.28.245.92"])
+  try:
+    return not subprocess.call(["ping", "-W", "4", "-c", "1", "117.28.245.92"])
+  except ProcessLookupError:
+    return False
 
 def common_controller_ctrl(enabled, dragon_lat_ctrl, dragon_enable_steering_on_signal, blinker_on, steer_req):
   if enabled:
