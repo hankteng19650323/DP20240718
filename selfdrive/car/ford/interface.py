@@ -5,7 +5,7 @@ from selfdrive.config import Conversions as CV
 from selfdrive.car.ford.values import MAX_ANGLE, Ecu, ECU_FINGERPRINT, FINGERPRINTS
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, is_ecu_disconnected, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
-from common.dp_common import common_interface_update
+from common.dp_common import common_interface_atl
 
 class CarInterface(CarInterfaceBase):
 
@@ -56,7 +56,7 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp)
     # dp
     self.dragonconf = dragonconf
-    ret = common_interface_update(ret) if dragonconf.dpAtl else ret
+    ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
     ret.canValid = self.cp.can_valid
 
     # events

@@ -16,13 +16,13 @@ def common_controller_ctrl(enabled, dragon_lat_ctrl, dragon_enable_steering_on_s
       steer_req = 0 if isinstance(steer_req, int) else False
   return steer_req
 
-def common_interface_update(ret):
+def common_interface_atl(ret, atl):
   # dp
-  if ret.cruiseState.available:
+  enable_acc = ret.cruiseState.enabled
+  if atl and ret.cruiseState.available:
     enable_acc = True
     if ret.gearShifter in [car.CarState.GearShifter.reverse, car.CarState.GearShifter.park]:
       enable_acc = False
     if ret.seatbeltUnlatched or ret.doorOpen:
       enable_acc = False
-    ret.cruiseState.enabled = enable_acc
-  return ret
+  return enable_acc

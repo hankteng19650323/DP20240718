@@ -3,7 +3,7 @@ from selfdrive.car.volkswagen.values import CAR, BUTTON_STATES, NWL, TRANS, GEAR
 from common.params import put_nonblocking
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
-from common.dp_common import common_interface_update
+from common.dp_common import common_interface_atl
 
 EventName = car.CarEvent.EventName
 
@@ -116,7 +116,8 @@ class CarInterface(CarInterfaceBase):
 
     # dp
     self.dragonconf = dragonconf
-    ret = common_interface_update(ret) if dragonconf.dpAtl else ret
+    ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
+
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
@@ -150,7 +151,7 @@ class CarInterface(CarInterfaceBase):
     elif not self.cruise_enabled_prev:
       events.add(EventName.pcmEnable)
 
-    ret.events = events
+    ret.events = events.to_msg()
     ret.buttonEvents = buttonEvents
     ret.canMonoTimes = canMonoTimes
 

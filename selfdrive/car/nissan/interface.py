@@ -3,7 +3,7 @@ from cereal import car
 from selfdrive.car.nissan.values import CAR
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
-from common.dp_common import common_interface_update
+from common.dp_common import common_interface_atl
 
 class CarInterface(CarInterfaceBase):
   def __init__(self, CP, CarController, CarState):
@@ -68,7 +68,7 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp_adas, self.cp_cam)
     # dp
     self.dragonconf = dragonconf
-    ret = common_interface_update(ret) if dragonconf.dpAtl else ret
+    ret.cruiseState.enabled = common_interface_atl(ret, dragonconf.dpAtl)
     ret.canValid = self.cp.can_valid and self.cp_adas.can_valid and self.cp_cam.can_valid
 
     buttonEvents = []
