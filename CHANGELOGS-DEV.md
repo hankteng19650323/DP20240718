@@ -1,3 +1,8 @@
+dragonpilot 0.7.6.2
+========================
+* 修正無法正確關閉駕駛監控的問題。
+* Fixed unable to properly turn off driver monitor issue.
+
 dragonpilot 0.7.6.1
 ========================
 * 基於最新 openpilot 0.7.6.1 devel.

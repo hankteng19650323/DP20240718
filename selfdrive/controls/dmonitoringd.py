@@ -7,6 +7,7 @@ import cereal.messaging as messaging
 from selfdrive.controls.lib.events import Events
 from selfdrive.controls.lib.driver_monitor import DriverStatus, MAX_TERMINAL_ALERTS, MAX_TERMINAL_DURATION
 from selfdrive.locationd.calibration_helpers import Calibration
+from common.realtime import DT_DMON
 
 def dmonitoringd_thread(sm=None, pm=None):
   gc.disable()
@@ -43,18 +44,21 @@ def dmonitoringd_thread(sm=None, pm=None):
 
   # 10Hz <- dmonitoringmodeld
   while True:
+    sm.update()
+
     if sm.updated['dragonConf']:
       if not sm['dragonConf'].dpDriverMonitor:
         driver_status.active_monitoring_mode = False
         driver_status.face_detected = False
+        driver_status.threshold_pre = 15. / sm['dragonConf'].dpSteeringMonitorTimer
+        driver_status.threshold_prompt = 6. / sm['dragonConf'].dpSteeringMonitorTimer
+        driver_status.step_change = DT_DMON / sm['dragonConf'].dpSteeringMonitorTimer
         if not sm['dragonConf'].dpSteeringMonitor:
           driver_status.awareness = 1.
           driver_status.awareness_active = 1.
           driver_status.awareness_passive = 1.
           driver_status.terminal_alert_cnt = 0
           driver_status.terminal_time = 0
-
-    sm.update()
 
     # Handle calibration
     if sm.updated['liveCalibration']:
@@ -81,7 +85,7 @@ def dmonitoringd_thread(sm=None, pm=None):
     # Get data from dmonitoringmodeld
     if sm.updated['driverState']:
       events = Events()
-      if sm['dragonConf'].dpDriverMonitor:
+      if sm.updated['dragonConf'] and sm['dragonConf'].dpDriverMonitor:
         driver_status.get_pose(sm['driverState'], cal_rpy, sm['carState'].vEgo, sm['carState'].cruiseState.enabled)
       # Block any engage after certain distrations
       if driver_status.terminal_alert_cnt >= MAX_TERMINAL_ALERTS or driver_status.terminal_time >= MAX_TERMINAL_DURATION:

@@ -43,6 +43,7 @@ confs = [
   # safety
   {'name': 'dp_driver_monitor', 'default': True, 'type': 'Bool', 'conf_type': ['param', 'struct']},
   {'name': 'dp_steering_monitor', 'default': True, 'type': 'Bool', 'depends': [{'name': 'dp_driver_monitor', 'vals': [False]}], 'conf_type': ['param', 'struct']},
+  {'name': 'dp_steering_monitor_timer', 'default': 70, 'type': 'UInt8', 'min': 70, 'max': 360, 'depends': [{'name': 'dp_driver_monitor', 'vals': [False]}, {'name': 'dp_steering_monitor', 'vals': [True]}], 'conf_type': ['param', 'struct']},
   {'name': 'dp_gear_check', 'default': True, 'type': 'Bool', 'depends': [{'name': 'dp_atl', 'vals': [False]}], 'conf_type': ['param', 'struct']},
   {'name': 'dp_temp_monitor', 'default': True, 'type': 'Bool', 'conf_type': ['param', 'struct']},
   # UIs
