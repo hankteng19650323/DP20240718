@@ -14,24 +14,24 @@ EventName = car.CarEvent.EventName
 #  We recommend that you do not change these numbers from the defaults.
 # ******************************************************************************************
 
-_AWARENESS_TIME = 70.  # one minute limit without user touching steering wheels make the car enter a terminal status
+_AWARENESS_TIME = 600.  # one minute limit without user touching steering wheels make the car enter a terminal status
 _AWARENESS_PRE_TIME_TILL_TERMINAL = 15.  # a first alert is issued 25s before expiration
 _AWARENESS_PROMPT_TIME_TILL_TERMINAL = 6.  # a second alert is issued 15s before start decelerating the car
 _DISTRACTED_TIME = 11.
 _DISTRACTED_PRE_TIME_TILL_TERMINAL = 8.
 _DISTRACTED_PROMPT_TIME_TILL_TERMINAL = 6.
 
-_FACE_THRESHOLD = 0.6
-_EYE_THRESHOLD = 0.6
-_SG_THRESHOLD = 0.5
-_BLINK_THRESHOLD = 0.5  # 0.225
-_BLINK_THRESHOLD_SLACK = 0.65
-_BLINK_THRESHOLD_STRICT = 0.5
+_FACE_THRESHOLD = 0.9
+_EYE_THRESHOLD = 0.9
+_SG_THRESHOLD = 0.9
+_BLINK_THRESHOLD = 0.9  # 0.225
+_BLINK_THRESHOLD_SLACK = 0.95
+_BLINK_THRESHOLD_STRICT = 0.8
 _PITCH_WEIGHT = 1.35  # 1.5  # pitch matters a lot more
-_POSESTD_THRESHOLD = 0.14
-_METRIC_THRESHOLD = 0.4
-_METRIC_THRESHOLD_SLACK = 0.55
-_METRIC_THRESHOLD_STRICT = 0.4
+_POSESTD_THRESHOLD = 0.54
+_METRIC_THRESHOLD = 0.9
+_METRIC_THRESHOLD_SLACK = 0.95
+_METRIC_THRESHOLD_STRICT = 0.8
 _PITCH_POS_ALLOWANCE = 0.12  # rad, to not be too sensitive on positive pitch
 _PITCH_NATURAL_OFFSET = 0.02  # people don't seem to look straight when they drive relaxed, rather a bit up
 _YAW_NATURAL_OFFSET = 0.08  # people don't seem to look straight when they drive relaxed, rather a bit to the right (center of car)
