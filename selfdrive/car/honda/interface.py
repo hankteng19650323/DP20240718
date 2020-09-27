@@ -327,15 +327,15 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 3935. * CV.LB_TO_KG + STD_CARGO_KG
       ret.wheelbase = 2.68
       ret.centerToFront = ret.wheelbase * 0.38
-      ret.steerRatio = 15.0  # as spec
+      ret.steerRatio = 17.0  # as spec
       ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 1000], [0, 1000]]  # TODO: determine if there is a dead zone at the top end
       tire_stiffness_factor = 0.444
       #ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.8], [0.24]]
       ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 10.0
-      ret.lateralTuning.indi.outerLoopGain = 14.0
-      ret.lateralTuning.indi.timeConstant = 4.5
-      ret.lateralTuning.indi.actuatorEffectiveness = 3.5
+      ret.lateralTuning.indi.innerLoopGain = 9.0
+      ret.lateralTuning.indi.outerLoopGain = 13.0
+      ret.lateralTuning.indi.timeConstant = 5.0
+      ret.lateralTuning.indi.actuatorEffectiveness = 4.0
       ret.longitudinalTuning.kpBP = [0., 5., 35.]
       ret.longitudinalTuning.kpV = [1.2, 0.8, 0.5]
       ret.longitudinalTuning.kiBP = [0., 35.]
@@ -439,7 +439,7 @@ class CarInterface(CarInterfaceBase):
     ret.stoppingControl = True
     ret.startAccel = 0.5
 
-    ret.steerActuatorDelay = 0.6
+    ret.steerActuatorDelay = 0.78
     ret.steerRateCost = 0.2
     ret.steerLimitTimer = 0.8
 
