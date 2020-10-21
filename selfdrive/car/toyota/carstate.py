@@ -219,7 +219,6 @@ class CarState(CarStateBase):
       signals += [("ZORRO_STEER", "SECONDARY_STEER_ANGLE", 0)]
 
     checks = []
-
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
 
   @staticmethod
@@ -234,5 +233,5 @@ class CarState(CarStateBase):
     checks = [
       ("STEERING_LKA", 42)
     ]
-
+    checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)

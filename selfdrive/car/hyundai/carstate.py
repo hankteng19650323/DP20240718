@@ -449,6 +449,7 @@ class CarState(CarStateBase):
         ("SCC11", 50),
         ("SCC12", 50),
       ]
+      checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
 
   @staticmethod
@@ -530,4 +531,5 @@ class CarState(CarStateBase):
         ("SCC11", 50),
         ("SCC12", 50),
       ]
+      checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
