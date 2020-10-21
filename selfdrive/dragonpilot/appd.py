@@ -13,6 +13,7 @@ import os
 from common.dp_common import is_online
 from common.dp_conf import get_struct_name
 from common.realtime import sec_since_boot
+import psutil
 
 is_online = is_online()
 auto_update = params.get("dp_app_auto_update", encoding='utf8') == "1"
@@ -73,7 +74,7 @@ class App():
     self.manual_ctrl_status = self.MANUAL_IDLE
     self.manually_ctrled = False
     self.init = False
-    self.check_hotspot_before_launch = True if self.app_type == App.TYPE_ANDROID_AUTO else False
+    self.check_crash = True if self.app_type == App.TYPE_ANDROID_AUTO else False
 
   def get_remote_version(self):
     apk = self.app + ".apk"
@@ -206,12 +207,6 @@ class App():
 
         if self.app_type == self.TYPE_SERVICE:
           self.appops_set(self.app, "android:mock_location", "allow")
-        if self.check_hotspot_before_launch:
-          retry = 0
-          while not self.is_on_hotspot() or retry < 3:
-            print("retry")
-            time.sleep(5)
-            retry += 1
         self.system(self.start_cmd)
     self.is_running = True
 
@@ -239,14 +234,6 @@ class App():
                      cmd=e.cmd,
                      output=e.output[-1024:],
                      returncode=e.returncode)
-
-  def is_on_hotspot(self):
-    try:
-      result = subprocess.check_output(["ifconfig", "wlan0"], stderr=subprocess.STDOUT, encoding='utf8')
-      result = re.findall(r"inet addr:((\d+\.){3}\d+)", result)[0][0]
-      return result.startswith('192.168.')  # android
-    except Exception:
-      return False
 
 def init_apps(apps):
   apps.append(App(
@@ -371,6 +358,8 @@ def main():
   init_done = False
   dragon_conf_msg = None
 
+  next_check_process_frame = 0
+
   while 1: #has_enabled_apps:
     start_sec = sec_since_boot()
     if not init_done:
@@ -387,6 +376,7 @@ def main():
         continue
       enabled_apps = []
       has_fullscreen_apps = False
+      has_check_crash = False
       for app in apps:
         # read params loop
         app.read_params(dragon_conf_msg)
@@ -396,6 +386,8 @@ def main():
         if app.is_enabled:
           if not has_fullscreen_apps and app.app_type in [App.TYPE_FULLSCREEN, App.TYPE_ANDROID_AUTO]:
             has_fullscreen_apps = True
+          if not has_check_crash and app.check_crash:
+            has_check_crash = True
 
           # process manual ctrl apps
           if app.manual_ctrl_status != App.MANUAL_IDLE:
@@ -431,6 +423,13 @@ def main():
         last_overheat = dragon_conf_msg.dpThermalOverheat
 
         # only run apps that's not manually ctrled
+        if has_check_crash and frame >= next_check_process_frame:
+          proc_iter = psutil.process_iter(attrs=["name", "cmdline"])
+          for app in enabled_apps:
+            if app.is_running and app.check_crash and not any(app.app in p.info["cmdline"] for p in proc_iter):
+              app.kill()
+          next_check_process_frame = frame + 15
+
         for app in enabled_apps:
           if not app.manually_ctrled:
             if has_fullscreen_apps:
