@@ -95,7 +95,7 @@ static void enable_event_processing(bool yes) {
 static void set_awake(UIState *s, bool awake) {
   if (awake) {
     // 30 second timeout
-    s->awake_timeout = 30*UI_FREQ;
+    s->awake_timeout = (s->scene.dpUiScreenOffDriving && s->started)? 10*UI_FREQ : 30*UI_FREQ;
   }
   if (s->awake != awake) {
     s->awake = awake;
@@ -112,6 +112,44 @@ static void set_awake(UIState *s, bool awake) {
       enable_event_processing(false);
     }
   }
+}
+
+static bool handle_dp_btn_touch(UIState *s, int touch_x, int touch_y) {
+  //dfButton manager  // code below thanks to kumar: https://github.com/arne182/openpilot/commit/71d5aac9f8a3f5942e89634b20cbabf3e19e3e78
+  if (s->started && s->active_app != cereal::UiLayoutState::App::SETTINGS) {
+    if (s->scene.dpDynamicFollow > 0 && touch_x >= df_btn_x && touch_x <= (df_btn_x + df_btn_w) && touch_y >= df_btn_y && touch_y <= (df_btn_y + df_btn_h)) {
+      int val = s->scene.dpDynamicFollow;
+      val++;
+      if (val >= 5) {
+        val = 1;
+      }
+
+      char str[2] = {0};
+      sprintf(str, "%d", val);
+      write_db_value("dp_dynamic_follow", str, 1);
+
+      char time_str[11];
+      snprintf(time_str, 11, "%lu", time(NULL));
+      write_db_value("dp_last_modified", time_str, 11);
+      return true;
+    } else if (s->scene.dpAccelProfile > 0 && touch_x >= ap_btn_x && touch_x <= (ap_btn_x + ap_btn_w) && touch_y >= ap_btn_y && touch_y <= (ap_btn_y + ap_btn_h)) {
+      int val = s->scene.dpAccelProfile;
+      val++;
+      if (val >= 4) {
+        val = 1;
+      }
+
+      char str[2] = {0};
+      sprintf(str, "%d", val);
+      write_db_value("dp_accel_profile", str, 1);
+
+      char time_str[11];
+      snprintf(time_str, 11, "%lu", time(NULL));
+      write_db_value("dp_last_modified", time_str, 11);
+      return true;
+    }
+  }
+  return false;
 }
 
 static void handle_vision_touch(UIState *s, int touch_x, int touch_y) {
@@ -202,6 +240,13 @@ int main(int argc, char* argv[]) {
   const int MAX_VOLUME = LEON ? 15 : 12;
   s->sound->setVolume(MIN_VOLUME);
 
+  // dp
+  s->scene.dp_alert_rate = 0;
+  s->scene.dp_alert_type = 1;
+  if (s->scene.dpUiScreenOffDriving && !s->awake) {
+    set_awake(s, true);
+  }
+  bool show_layer = true;
   while (!do_exit) {
     if (!s->started || !s->vision_connected) {
       // Delay a while to avoid 9% cpu usage while car is not started and user is keeping touching on the screen.
@@ -210,19 +255,50 @@ int main(int argc, char* argv[]) {
     double u1 = millis_since_boot();
 
     ui_update(s);
+    // hide layer when waze is running
+    if (s->scene.dpFullScreenApp) {
+      if (!show_layer && !s->started && s->status == STATUS_OFFROAD) {
+        framebuffer_swap_layer(s->fb, 0);
+        show_layer = true;
+      } else if (show_layer && s->started) {
+        framebuffer_swap_layer(s->fb, 0x00001000);
+        show_layer = false;
+      }
+    }
 
-    // poll for touch events
-    int touch_x = -1, touch_y = -1;
-    int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
-    if (touched == 1) {
-      set_awake(s, true);
-      handle_sidebar_touch(s, touch_x, touch_y);
-      handle_vision_touch(s, touch_x, touch_y);
+    if (s->started && s->scene.dpFullScreenApp) {
+      // always collapsed sidebar when vision is connect and in waze mode
+      s->scene.uilayout_sidebarcollapsed = true;
+    } else {
+      // poll for touch events
+      int touch_x = -1, touch_y = -1;
+      int touched = touch_poll(&touch, &touch_x, &touch_y, 0);
+      if (touched == 1) {
+        if (s->scene.dpUiScreenOffDriving && s->awake_timeout == 0) {
+          set_awake(s, true);
+        } else {
+          set_awake(s, true);
+          if (!handle_dp_btn_touch(s, touch_x, touch_y)) {
+            handle_sidebar_touch(s, touch_x, touch_y);
+            handle_vision_touch(s, touch_x, touch_y);
+          }
+        }
+      }
     }
 
     // manage wakefulness
     if (s->started || s->ignition) {
-      set_awake(s, true);
+      if (s->scene.dpUiScreenOffDriving) {
+        // turn on screen when alert is here.
+        if (s->awake_timeout == 0 && (s->status == STATUS_DISENGAGED || s->status == STATUS_ALERT || s->status == STATUS_WARNING)) {
+          set_awake(s, true);
+        }
+        // do nothing
+      } else if (s->scene.isReversing && s->scene.dpUiScreenOffReversing) {
+        set_awake(s, false);
+      } else {
+        set_awake(s, true);
+      }
     }
 
     if (s->awake_timeout > 0) {
@@ -237,15 +313,26 @@ int main(int argc, char* argv[]) {
     }
 
     // up one notch every 5 m/s
-    s->sound->setVolume(fmin(MAX_VOLUME, MIN_VOLUME + s->scene.controls_state.getVEgo() / 5));
+    float min = MIN_VOLUME + s->scene.controls_state.getVEgo() / 5;
+    if (s->scene.dpUiVolumeBoost > 0 || s->scene.dpUiVolumeBoost < 0) {
+      min = min * (1 + s->scene.dpUiVolumeBoost * 0.01);
+    }
+    s->sound->setVolume(fmin(MAX_VOLUME, min)); // up one notch every 5 m/s
 
     // set brightness
-    float clipped_brightness = fmin(512, (s->light_sensor*brightness_m) + brightness_b);
-    smooth_brightness = fmin(255, clipped_brightness * 0.01 + smooth_brightness * 0.99);
-    ui_set_brightness(s, (int)smooth_brightness);
-
+    if (s->scene.dpUiBrightness == 0) {
+      float clipped_brightness = fmin(512, (s->light_sensor*brightness_m) + brightness_b);
+      smooth_brightness = fmin(255, clipped_brightness * 0.01 + smooth_brightness * 0.99);
+      ui_set_brightness(s, (int)smooth_brightness);
+    } else {
+      ui_set_brightness(s, (int)(255*s->scene.dpUiBrightness*0.01));
+    }
     update_offroad_layout_state(s, pm);
 
+    // skip refresh when running waze
+    if (s->scene.dpFullScreenApp && s->started) {
+      continue;
+    }
     ui_draw(s);
     double u2 = millis_since_boot();
     if (!s->scene.frontview && (u2-u1 > 66)) {

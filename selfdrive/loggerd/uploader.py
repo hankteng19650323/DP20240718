@@ -19,6 +19,8 @@ from common.params import Params
 from selfdrive.loggerd.xattr_cache import getxattr, setxattr
 from selfdrive.loggerd.config import ROOT
 from selfdrive.swaglog import cloudlog
+from common.dp_time import LAST_MODIFIED_UPLOADER
+from common.dp_common import get_last_modified, param_get_if_updated
 
 NetworkType = log.ThermalData.NetworkType
 UPLOAD_ATTR_NAME = 'user.upload'
@@ -236,6 +238,16 @@ def uploader_fn(exit_event):
 
   uploader = Uploader(dongle_id, ROOT)
 
+  # dp
+  dp_upload_on_mobile = False
+  dp_last_modified_upload_on_mobile = None
+  dp_upload_on_hotspot = False
+  dp_last_modified_upload_on_hotspot = None
+
+  modified = None
+  last_modified = None
+  last_modified_check = None
+
   backoff = 0.1
   counter = 0
   should_upload = False
@@ -246,6 +258,14 @@ def uploader_fn(exit_event):
     if check_network:
       on_hotspot = is_on_hotspot()
       on_wifi = is_on_wifi()
+
+      # dp - load temp monitor conf
+      last_modified_check, modified = get_last_modified(LAST_MODIFIED_UPLOADER, last_modified_check, modified)
+      if last_modified != modified:
+        dp_upload_on_mobile, dp_last_modified_upload_on_mobile = param_get_if_updated("dp_upload_on_mobile", "bool", dp_upload_on_mobile, dp_last_modified_upload_on_mobile)
+        dp_upload_on_hotspot, dp_last_modified_upload_on_hotspot = param_get_if_updated("dp_upload_on_hotspot", "bool", dp_upload_on_hotspot, dp_last_modified_upload_on_hotspot)
+        last_modified = modified
+
       should_upload = on_wifi and not on_hotspot
 
     d = uploader.next_file_to_upload(with_raw=allow_raw_upload and should_upload)

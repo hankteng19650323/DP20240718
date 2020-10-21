@@ -123,21 +123,48 @@ void set_safety_mode(uint16_t mode, int16_t param) {
   }
   switch (mode_copy) {
     case SAFETY_SILENT:
+      #ifdef vw
       set_intercept_relay(false);
+      // Volkswagen community port:
+      // J533 integrations with White/Grey Panda really need Panda to respond
+      // at all times. Let the CAN transceivers ACK traffic unless this is
+      // BP/Uno where the physical relay makes it irrelevant. This makes
+      // SILENT identical to NOOUTPUT for White/Grey Panda.
+      if (board_has_obd()) {
+        current_board->set_can_mode(CAN_MODE_NORMAL);
+        can_silent = ALL_CAN_SILENT;
+      } else {
+        can_silent = ALL_CAN_LIVE;
+      }
+      #else
+      #ifdef hkg
+      set_intercept_relay(true);
+      #else
+      set_intercept_relay(false);
+      #endif
       if (board_has_obd()) {
         current_board->set_can_mode(CAN_MODE_NORMAL);
       }
       can_silent = ALL_CAN_SILENT;
+      #endif
       break;
     case SAFETY_NOOUTPUT:
+      #ifdef hkg
+      set_intercept_relay(true);
+      #else
       set_intercept_relay(false);
+      #endif
       if (board_has_obd()) {
         current_board->set_can_mode(CAN_MODE_NORMAL);
       }
       can_silent = ALL_CAN_LIVE;
       break;
     case SAFETY_ELM327:
+      #ifdef hkg
+      set_intercept_relay(true);
+      #else
       set_intercept_relay(false);
+      #endif
       heartbeat_counter = 0U;
       if (board_has_obd()) {
         current_board->set_can_mode(CAN_MODE_OBD_CAN2);
@@ -718,6 +745,13 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
       if (heartbeat_counter >= (check_started() ? EON_HEARTBEAT_IGNITION_CNT_ON : EON_HEARTBEAT_IGNITION_CNT_OFF)) {
         puts("EON hasn't sent a heartbeat for 0x");
         puth(heartbeat_counter);
+        #ifdef hkg
+        // MDPS will hard fault if SAFETY_SILENT set or panda slept
+        puts(" seconds. Safety is set to NOOUTPUT mode.\n");
+        if (current_safety_mode != SAFETY_NOOUTPUT) {
+          set_safety_mode(SAFETY_NOOUTPUT, 0U);
+        }
+        #else
         puts(" seconds. Safety is set to SILENT mode.\n");
         if (current_safety_mode != SAFETY_SILENT) {
           set_safety_mode(SAFETY_SILENT, 0U);
@@ -725,6 +759,7 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
         if (power_save_status != POWER_SAVE_STATUS_ENABLED) {
           set_power_save_state(POWER_SAVE_STATUS_ENABLED);
         }
+        #endif
 
         // Also disable IR when the heartbeat goes missing
         current_board->set_ir_power(0U);
@@ -834,7 +869,11 @@ int main(void) {
   // use TIM2->CNT to read
 
   // init to SILENT and can silent
+  #ifdef hkg
+  set_safety_mode(SAFETY_ALLOUTPUT, 0); // MDPS will hard if SAFETY_NOOUTPUT
+  #else
   set_safety_mode(SAFETY_SILENT, 0);
+  #endif
 
   // enable CAN TXs
   current_board->enable_can_transceivers(true);
