@@ -46,11 +46,12 @@ class App():
       for opt in self.opts:
         self.appops_set(self.app, opt, "allow")
 
-  def __init__(self, app, start_cmd, enable_param, auto_run_param, manual_ctrl_param, app_type, permissions, opts):
+  def __init__(self, app, start_cmd, enable_param, auto_run_param, manual_ctrl_param, app_type, check_crash, permissions, opts):
     self.app = app
     # main activity
     self.start_cmd = start_cmd
     # read enable param
+    self.enable_param = enable_param
     self.enable_struct = get_struct_name(enable_param) if enable_param is not None else None
     # read auto run param
     self.auto_run_struct = get_struct_name(auto_run_param) if auto_run_param is not None else None
@@ -74,7 +75,18 @@ class App():
     self.manual_ctrl_status = self.MANUAL_IDLE
     self.manually_ctrled = False
     self.init = False
-    self.check_crash = True if self.app_type == App.TYPE_ANDROID_AUTO else False
+    self.check_crash = check_crash
+
+  def is_crashed(self):
+    return getattr(self, self.enable_param + "_is_crashed")()
+
+  def dp_app_hr_is_crashed(self):
+    try:
+      result = subprocess.check_output(["dumpsys", "activity", "gb.xxy.hr"], encoding='utf8')
+      print("is_crash = %s" % "ACTIVITY" in result)
+      return "ACTIVITY" not in result
+    except (subprocess.CalledProcessError, IndexError) as e:
+      return False
 
   def get_remote_version(self):
     apk = self.app + ".apk"
@@ -243,6 +255,7 @@ def init_apps(apps):
     None,
     None,
     App.TYPE_SERVICE,
+    False,
     [],
     [],
   ))
@@ -253,6 +266,7 @@ def init_apps(apps):
     None,
     "dp_app_mixplorer_manual",
     App.TYPE_UTIL,
+    False,
     [
       "android.permission.READ_EXTERNAL_STORAGE",
       "android.permission.WRITE_EXTERNAL_STORAGE",
@@ -266,6 +280,7 @@ def init_apps(apps):
     "dp_app_tomtom_auto",
     "dp_app_tomtom_manual",
     App.TYPE_GPS,
+    False,
     [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.ACCESS_COARSE_LOCATION",
@@ -283,6 +298,7 @@ def init_apps(apps):
     "dp_app_aegis_auto",
     "dp_app_aegis_manual",
     App.TYPE_GPS,
+    False,
     [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.READ_EXTERNAL_STORAGE",
@@ -299,6 +315,7 @@ def init_apps(apps):
     "dp_app_autonavi_auto",
     "dp_app_autonavi_manual",
     App.TYPE_GPS,
+    False,
     [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.ACCESS_COARSE_LOCATION",
@@ -316,6 +333,7 @@ def init_apps(apps):
     None,
     "dp_app_waze_manual",
     App.TYPE_FULLSCREEN,
+    False,
     [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.ACCESS_COARSE_LOCATION",
@@ -333,6 +351,7 @@ def init_apps(apps):
     None,
     "dp_app_hr_manual",
     App.TYPE_ANDROID_AUTO,
+    True,
     [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.ACCESS_COARSE_LOCATION",
@@ -424,9 +443,8 @@ def main():
 
         # only run apps that's not manually ctrled
         if has_check_crash and frame >= next_check_process_frame:
-          proc_iter = psutil.process_iter(attrs=["name", "cmdline"])
           for app in enabled_apps:
-            if app.is_running and app.check_crash and not any(app.app in p.info["cmdline"] for p in proc_iter):
+            if app.is_running and app.check_crash and app.is_crashed():
               app.kill()
           next_check_process_frame = frame + 15
 

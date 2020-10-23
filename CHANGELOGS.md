@@ -1,3 +1,8 @@
+2020-10-23 (0.7.9.0)
+========================
+* 加入 Headunit Reloaded Android Auto 斷線偵側。
+* Added Disconnect detection for Headunit Reloaded Android Auto.
+
 2020-10-21 (0.7.9.0)
 ========================
 * 基於最新 openpilot 0.7.9 devel.
