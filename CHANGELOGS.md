@@ -2,6 +2,8 @@
 ========================
 * 加入 Headunit Reloaded Android Auto 斷線偵側。
 * Added Disconnect detection for Headunit Reloaded Android Auto.
+* 加入 complete_setup.sh (感謝 @深鲸希西 提供)
+* Added complete_setup.sh (Thanks to @深鲸希西)
 
 2020-10-21 (0.7.9.0)
 ========================

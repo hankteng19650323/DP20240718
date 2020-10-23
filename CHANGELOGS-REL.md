@@ -14,6 +14,8 @@ dragonpilot 0.7.9.0
 * Added Headunit Reloaded Android Auto App Support. (Thanks to @Ninjaa)
 * 優化 nanovg。(感謝 @piggy 提供)
 * Optomized nanovg. (Thanks to @piggy)
+* 加入 complete_setup.sh (感謝 @深鲸希西 提供)
+* Added complete_setup.sh (Thanks to @深鲸希西)
 
 dragonpilot 0.7.8
 ========================
