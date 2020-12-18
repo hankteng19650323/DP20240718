@@ -30,9 +30,9 @@ class LanePlanner:
     self.p_poly = [0., 0., 0., 0.]
     self.d_poly = [0., 0., 0., 0.]
 
-    self.lane_width_estimate = 2.85
+    self.lane_width_estimate = 3.7 #2.85
     self.lane_width_certainty = 1.0
-    self.lane_width = 2.85
+    self.lane_width = 3.7 # 2.85
 
     self.l_prob = 0.
     self.r_prob = 0.
@@ -92,7 +92,7 @@ class LanePlanner:
       # dp note
       # [3.5, 4.5] = from 3m to 4m (lane width)
       # [1.0, 0.0] = "use lane line" to "not use lane line at all"
-      prob_mods.append(interp(width_at_t, [3.5, 4.5], [1.0, 0.0]))
+      prob_mods.append(interp(width_at_t, [4.0, 5.0], [1.0, 0.0])) #[3.5, 4.5], [1.0, 0.0]))
     mod = min(prob_mods)
     l_prob *= mod
     r_prob *= mod
