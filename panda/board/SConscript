@@ -36,6 +36,11 @@ else:
     "-g",
   ]
 
+  with open("/data/params/d/dp_vw") as f:
+    dp_vw = f.read().strip()
+    if dp_vw == "1":
+      PROJECT_FLAGS += ['-Dvw']
+
   if not PC:
     PROJECT_FLAGS += ["-DEON"]
     BUILDER = "EON"

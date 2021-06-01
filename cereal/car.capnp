@@ -123,6 +123,16 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     neosUpdateRequiredDEPRECATED @88;
     modelLagWarningDEPRECATED @93;
     startupOneplusDEPRECATED @82;
+
+    #dp
+    manualSteeringRequired @99;
+    manualSteeringRequiredBlinkersOn @100;
+    leadCarMoving @101;
+
+    # timebomb assist
+    timebombWarn @102;
+    timebombBypassing @103;
+    timebombBypassed @104;
   }
 }
 
@@ -556,5 +566,5 @@ struct CarParams {
     gateway @1;    # Integration at vehicle's CAN gateway
   }
 
-  isPandaBlackDEPRECATED @39: Bool;
+  isPandaBlack @39: Bool;
 }
