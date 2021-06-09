@@ -232,17 +232,13 @@ class CarState(CarStateBase):
 
     # ******************* parse out can *******************
     # TODO: find wheels moving bit in dbc
-    if self.CP.carFingerprint in (CAR.ACCORD, CAR.ACCORD_15, CAR.ACCORDH, CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G):
-      ret.standstill = cp.vl["ENGINE_DATA"]['XMISSION_SPEED'] < 0.1
-      ret.doorOpen = bool(cp.vl["SCM_FEEDBACK"]['DRIVERS_DOOR_OPEN'])
-      if self.has_lead_distance == 0:
-        try:
-          self.lead_distance = cp.vl["RADAR_HUD"]['LEAD_DISTANCE']
-          self.has_lead_distance = 1
-        except KeyError:
-          self.has_lead_distance = -1
-      if self.has_lead_distance == 1:
+        if self.CP.carFingerprint in (CAR.ACCORD, CAR.ACCORD_15, CAR.ACCORDH, CAR.INSIGHT):
+        ret.standstill = cp.vl["ENGINE_DATA"]['XMISSION_SPEED'] < 0.1
+        ret.doorOpen = bool(cp.vl["SCM_FEEDBACK"]['DRIVERS_DOOR_OPEN'])
         self.lead_distance = cp.vl["RADAR_HUD"]['LEAD_DISTANCE']
+    elif self.CP.carFingerprint in (CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID,  CAR.ACURA_RDX_3G):
+        ret.standstill = cp.vl["ENGINE_DATA"]['XMISSION_SPEED'] < 0.1
+        ret.doorOpen = bool(cp.vl["SCM_FEEDBACK"]['DRIVERS_DOOR_OPEN'])
     elif self.CP.carFingerprint == CAR.ODYSSEY_CHN:
       ret.standstill = cp.vl["ENGINE_DATA"]['XMISSION_SPEED'] < 0.1
       ret.doorOpen = bool(cp.vl["SCM_BUTTONS"]['DRIVERS_DOOR_OPEN'])
@@ -364,15 +360,9 @@ class CarState(CarStateBase):
     ret.cruiseState.available = bool(main_on)
     ret.cruiseState.nonAdaptive = self.cruise_mode != 0
 
+
     # afa feature
-    if self.has_hud_lead == 0:
-      try:
-        self.hud_lead = cp.vl["ACC_HUD"]['HUD_LEAD']
-        self.has_hud_lead = 1
-      except KeyError:
-        self.has_hud_lead = -1
-    if self.has_hud_lead == 1:
-      self.hud_lead = cp.vl["ACC_HUD"]['HUD_LEAD']
+    self.hud_lead = cp.vl["ACC_HUD"]['HUD_LEAD']
 
     # Gets rid of Pedal Grinding noise when brake is pressed at slow speeds for some models
     if self.CP.carFingerprint in (CAR.PILOT, CAR.PILOT_2019, CAR.RIDGELINE):
