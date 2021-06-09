@@ -77,6 +77,26 @@ HUDData = namedtuple("HUDData",
 
 
 class CarController():
+  def __init__(self, dbc_name, CP, VM):
+    self.braking = False
+    self.brake_steady = 0.
+    self.brake_last = 0.
+    self.apply_brake_last = 0
+    self.last_pump_ts = 0.
+    self.packer = CANPacker(dbc_name)
+    self.new_radar_config = False
+
+    self.params = CarControllerParams(CP)
+    
+    # dp
+    self.last_blinker_on = False
+    self.blinker_end_frame = 0.
+    self.prev_lead_distance = 0.0
+    self.stopped_lead_distance = 0.0
+    self.lead_distance_counter = 1
+    self.lead_distance_counter_prev = 1
+    self.rough_lead_speed = 0.0
+
   def rough_speed(self, lead_distance):
     if self.prev_lead_distance != lead_distance:
       self.lead_distance_counter_prev = self.lead_distance_counter
@@ -88,27 +108,6 @@ class CarController():
     self.lead_distance_counter += 1.0
     self.prev_lead_distance = lead_distance
     return self.rough_lead_speed
-
-
-  def __init__(self, dbc_name, CP, VM):
-    # dp
-    self.last_blinker_on = False
-    self.blinker_end_frame = 0.
-    self.prev_lead_distance = 0.0
-    self.stopped_lead_distance = 0.0
-    self.lead_distance_counter = 1
-    self.lead_distance_counter_prev = 1
-    self.rough_lead_speed = 0.0
-
-    self.braking = False
-    self.brake_steady = 0.
-    self.brake_last = 0.
-    self.apply_brake_last = 0
-    self.last_pump_ts = 0.
-    self.packer = CANPacker(dbc_name)
-    self.new_radar_config = False
-
-    self.params = CarControllerParams(CP)
 
   def update(self, enabled, CS, frame, actuators,
              pcm_speed, pcm_override, pcm_cancel_cmd, pcm_accel,
