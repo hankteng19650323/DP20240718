@@ -42,6 +42,7 @@ def get_can_signals(CP):
     ("ESP_DISABLED", "VSA_STATUS", 1),
     ("USER_BRAKE", "VSA_STATUS", 0),
     ("BRAKE_HOLD_ACTIVE", "VSA_STATUS", 0),
+    ("HUD_LEAD", "ACC_HUD", 0),
     ("STEER_STATUS", "STEER_STATUS", 5),
     ("GEAR_SHIFTER", "GEARBOX", 0),
     ("PEDAL_GAS", "POWERTRAIN_DATA", 0),
@@ -118,8 +119,13 @@ def get_can_signals(CP):
       checks += [("CRUISE_PARAMS", 10)]
     else:
       checks += [("CRUISE_PARAMS", 50)]
-  if CP.carFingerprint in (CAR.ACCORD, CAR.ACCORD_15, CAR.ACCORDH, CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G):
-    signals += [("DRIVERS_DOOR_OPEN", "SCM_FEEDBACK", 1)]
+  if CP.carFingerprint in (CAR.ACCORD, CAR.ACCORD_15, CAR.ACCORDH, CAR.INSIGHT):
+      signals += [("DRIVERS_DOOR_OPEN", "SCM_FEEDBACK", 1),
+                  ("LEAD_DISTANCE", "RADAR_HUD", 0)]
+      checks += [("RADAR_HUD", 50)]
+  elif CP.carFingerprint in (CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID,  CAR.ACURA_RDX_3G):
+      signals += [("DRIVERS_DOOR_OPEN", "SCM_FEEDBACK", 1)]
+      checks += [("RADAR_HUD", 50)]
   elif CP.carFingerprint == CAR.ODYSSEY_CHN:
     signals += [("DRIVERS_DOOR_OPEN", "SCM_BUTTONS", 1)]
   elif CP.carFingerprint in [CAR.HRV, CAR.JADE]:
