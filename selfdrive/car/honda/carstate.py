@@ -61,7 +61,6 @@ def get_can_signals(CP):
     ("VSA_STATUS", 50),
   ]
 
-
   if CP.carFingerprint == CAR.ODYSSEY_CHN:
     checks += [
       ("SCM_FEEDBACK", 25),
