@@ -48,7 +48,10 @@ def get_can_signals(CP):
     ("PEDAL_GAS", "POWERTRAIN_DATA", 0),
     ("CRUISE_SETTING", "SCM_BUTTONS", 0),
     ("ACC_STATUS", "POWERTRAIN_DATA", 0),
+    #brakelights for HONDA BOSCH
+    ("BRAKE_LIGHTS", "ACC_CONTROL", 0),
   ]
+
 
   checks = [
     ("ENGINE_DATA", 100),
@@ -325,7 +328,12 @@ class CarState(CarStateBase):
     ret.cruiseState.enabled = cp.vl["POWERTRAIN_DATA"]['ACC_STATUS'] != 0
     ret.cruiseState.available = bool(main_on)
     ret.cruiseState.nonAdaptive = self.cruise_mode != 0
-
+    
+    #brakelights for HONDA BOSCH
+    self.brake_switch = cp.vl["POWERTRAIN_DATA"]['BRAKE_SWITCH'] != 0
+    self.brake_lights = cp.vl["ACC_CONTROL"]['BRAKE_LIGHTS'] != 0
+    self.user_brake = cp.vl["VSA_STATUS"]['USER_BRAKE']
+    
     # afa feature
     self.hud_lead = cp.vl["ACC_HUD"]['HUD_LEAD']
 
