@@ -296,7 +296,7 @@ class CarState(CarStateBase):
 
     self.brake_switch = cp.vl["POWERTRAIN_DATA"]['BRAKE_SWITCH'] != 0
     self.brake_lights = cp.vl["ACC_CONTROL"]['BRAKE_LIGHTS'] != 0
-    self.user_brake = cp.vl["ACC_CONTROL"]['BRAKE_LIGHTS']
+    self.user_brake = cp.vl["VSA_STATUS"]['USER_BRAKE']
 
     if self.CP.carFingerprint in HONDA_BOSCH:
       self.cruise_mode = cp.vl["ACC_HUD"]['CRUISE_CONTROL_LABEL']
