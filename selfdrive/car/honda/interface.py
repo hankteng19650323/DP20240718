@@ -494,7 +494,7 @@ class CarInterface(CarInterfaceBase):
     if self.CS.CP.carFingerprint in (CAR.CRV_HYBRID, CAR.ACCORDH):
       ret.brakeLights = bool(self.CS.brake_switch or
                              self.CS.brake_lights or self.CS.user_brake > brakelights_threshold_BOSCH)
-    else
+    else:
       ret.brakeLights = bool(self.CS.brake_switch or
                              c.actuators.brake > brakelights_threshold)
     # dp
