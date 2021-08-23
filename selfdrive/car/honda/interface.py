@@ -489,8 +489,14 @@ class CarInterface(CarInterfaceBase):
     ret.yawRate = self.VM.yaw_rate(ret.steeringAngle * CV.DEG_TO_RAD, ret.vEgo)
     # FIXME: read sendcan for brakelights
     brakelights_threshold = 0.02 if self.CS.CP.carFingerprint == CAR.CIVIC else 0.1
-    ret.brakeLights = bool(self.CS.brake_switch or
-                           c.actuators.brake > brakelights_threshold)
+    #brakelights for HONDA BOSCH
+    brakelights_threshold_BOSCH = 0.40
+    if self.CS.CP.carFingerprint in HONDA_BOSCH:
+      ret.brakeLights = bool(self.CS.brake_switch or
+                             self.CS.brake_lights or self.CS.user_brake > brakelights_threshold_BOSCH)
+    else:
+      ret.brakeLights = bool(self.CS.brake_switch or
+                             c.actuators.brake > brakelights_threshold)
 
     # dp
     ret.lkMode = self.CS.lkMode
