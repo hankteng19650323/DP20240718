@@ -48,6 +48,7 @@ def get_can_signals(CP):
     ("PEDAL_GAS", "POWERTRAIN_DATA", 0),
     ("CRUISE_SETTING", "SCM_BUTTONS", 0),
     ("ACC_STATUS", "POWERTRAIN_DATA", 0),
+    ("BRAKE_LIGHTS", "ACC_CONTROL", 0),
   ]
 
   checks = [
@@ -59,6 +60,7 @@ def get_can_signals(CP):
     ("POWERTRAIN_DATA", 100),
     ("VSA_STATUS", 50),
   ]
+
 
   if CP.carFingerprint == CAR.ODYSSEY_CHN:
     checks += [
@@ -294,6 +296,7 @@ class CarState(CarStateBase):
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD[self.CP.carFingerprint]
 
     self.brake_switch = cp.vl["POWERTRAIN_DATA"]['BRAKE_SWITCH'] != 0
+    self.brake_lights = cp.vl["ACC_CONTROL"]['BRAKE_LIGHTS'] != 0
 
     if self.CP.carFingerprint in HONDA_BOSCH:
       self.cruise_mode = cp.vl["ACC_HUD"]['CRUISE_CONTROL_LABEL']
