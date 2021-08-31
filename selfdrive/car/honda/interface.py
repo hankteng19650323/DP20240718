@@ -377,15 +377,17 @@ class CarInterface(CarInterfaceBase):
     ret.engineRPM = self.CS.engineRPM
 
     # dp - brake lights
-    if self.CS.CP.carFingerprint in HONDA_BOSCH:
-     ret.brakeLights = bool(self.CS.brake_switch or
-                            self.CS.brake_lights or self.CS.user_brake > 0.4)
-    else:
-     brakelights_threshold = -0.02 if self.CS.CP.carFingerprint == CAR.CIVIC else -0.1
-     ret.brakeLights = bool(self.CS.brake_switch or
-                            c.actuators.accel < brakelights_threshold)
+    #if self.CS.CP.carFingerprint in HONDA_BOSCH:
+    #  ret.brakeLights = bool(self.CS.brake_switch or
+    #                         self.CS.brake_lights or self.CS.user_brake > 0.4)
+    #else:
+    #  brakelights_threshold = 0.02 if self.CS.CP.carFingerprint == CAR.CIVIC else 0.1
+    # ret.brakeLights = bool(self.CS.brake_switch or
+    #                        c.actuators.brake > brakelights_threshold)
 
     buttonEvents = []
+
+    ret.lkMode = self.CS.lkMode
 
     if self.CS.cruise_buttons != self.CS.prev_cruise_buttons:
       be = car.CarState.ButtonEvent.new_message()
