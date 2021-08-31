@@ -93,10 +93,9 @@ def process_hud_alert(hud_alert):
 
 
 HUDData = namedtuple("HUDData",
-                     ["pcm_accel", "v_cruise", "car",
+                     ["pcm_accel", "v_cruise",  "car",
                      "lanes", "fcw", "acc_alert", "steer_required", "dashed_lanes"])
-
-
+                     
 class CarController():
   def rough_speed(self, lead_distance):
     if self.prev_lead_distance != lead_distance:
@@ -163,7 +162,6 @@ class CarController():
       hud_car = 0
 
     fcw_display, steer_required, acc_alert = process_hud_alert(hud_alert)
-
 
     # **** process the car messages ****
 
