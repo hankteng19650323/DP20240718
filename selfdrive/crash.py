@@ -73,7 +73,10 @@ def init() -> None:
                   release=version)
 
 dongle_id = Params().get("DongleId", encoding='utf-8')
-gitname = Params().get("GithubUsername", encoding='utf-8')
+try:
+  gitname = Params().get("GithubUsername", encoding='utf-8')
+except:
+  gitname = ""
 sentry_sdk.set_user({"id": dongle_id})
 sentry_sdk.set_user({"name": gitname})
 sentry_sdk.set_tag("dirty", dirty)
