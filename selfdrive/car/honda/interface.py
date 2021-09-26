@@ -84,8 +84,9 @@ class CarInterface(CarInterfaceBase):
       ret.pcmCruise = not ret.enableGasInterceptor
       ret.communityFeature = ret.enableGasInterceptor
 
-    if candidate in (CAR.CRV_5G, CAR.CRV_HYBRID, ):
-      ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
+    ret.enableBsm = True
+    # if candidate in (CAR.CRV_5G, CAR.CRV_HYBRID, ):
+      # ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
 
     # Accord 1.5T CVT has different gearbox message
     if candidate == CAR.ACCORD and 0x191 in fingerprint[1]:
@@ -395,13 +396,13 @@ class CarInterface(CarInterfaceBase):
     ret.engineRPM = self.CS.engineRPM
 
     # dp - brake lights
-    #if self.CS.CP.carFingerprint in HONDA_BOSCH:
-    #  ret.brakeLights = bool(self.CS.brake_switch or
-    #                         self.CS.brake_lights or self.CS.user_brake > 0.4)
-    #else:
-    #  brakelights_threshold = 0.02 if self.CS.CP.carFingerprint == CAR.CIVIC else 0.1
-    #  ret.brakeLights = bool(self.CS.brake_switch or
-    #                         c.actuators.brake > brakelights_threshold)
+    if self.CS.CP.carFingerprint in HONDA_BOSCH:
+      ret.brakeLights = bool(self.CS.brake_switch or
+                             self.CS.brake_lights or self.CS.user_brake > 0.4)
+    else:
+      brakelights_threshold = 0.02 if self.CS.CP.carFingerprint == CAR.CIVIC else 0.1
+      ret.brakeLights = bool(self.CS.brake_switch or
+                             c.actuators.brake > brakelights_threshold)
 
     buttonEvents = []
 
