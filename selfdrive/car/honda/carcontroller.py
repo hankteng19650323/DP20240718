@@ -5,7 +5,7 @@ from selfdrive.controls.lib.drive_helpers import rate_limit
 from common.numpy_fast import clip, interp
 from selfdrive.car import create_gas_command
 from selfdrive.car.honda import hondacan
-from selfdrive.car.honda.values import CruiseButtons, VISUAL_HUD, HONDA_BOSCH, HONDA_NIDEC_ALT_PCM_ACCEL, CarControllerParams
+from selfdrive.car.honda.values import CruiseButtons, VISUAL_HUD, CAR, HONDA_BOSCH, HONDA_NIDEC_ALT_PCM_ACCEL, CarControllerParams
 from opendbc.can.packer import CANPacker
 from common.dp_common import common_controller_ctrl
 
