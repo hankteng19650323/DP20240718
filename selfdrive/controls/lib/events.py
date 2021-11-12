@@ -525,7 +525,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, Callable[[Any, messaging.SubMaster, boo
 
   EventName.laneChange: {
     ET.WARNING: Alert(
-      _("Changing Lanes"),
+      _("Changing Lane"),
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .0, .1, .1),
