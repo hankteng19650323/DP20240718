@@ -1,5 +1,6 @@
 from selfdrive.car.honda.values import HONDA_BOSCH, CAR, CarControllerParams
 from selfdrive.config import Conversions as CV
+from common.params import Params
 
 # CAN bus layout with relay
 # 0 = ACC-CAN - radar side
