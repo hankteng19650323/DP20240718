@@ -42,6 +42,7 @@ def get_can_signals(CP, gearbox_msg, main_on_sig_msg):
     ("MAIN_ON", main_on_sig_msg, 0),
     #dp
     ("ENGINE_RPM", "POWERTRAIN_DATA", 0),
+    ("HUD_LEAD", "ACC_HUD", 0),
   ]
 
   checks = [
@@ -180,6 +181,7 @@ class CarState(CarStateBase):
 
     #dp
     self.lkMode = True
+    self.hud_lead = 0
     self.lead_distance = 0.
     self.engineRPM = 0
     self.dp_honda_kmh_display = Params().get_bool('dp_honda_kmh_display')
@@ -275,6 +277,8 @@ class CarState(CarStateBase):
       if not self.CP.openpilotLongitudinalControl:
         ret.cruiseState.nonAdaptive = cp.vl["ACC_HUD"]["CRUISE_CONTROL_LABEL"] != 0
         ret.cruiseState.standstill = cp.vl["ACC_HUD"]["CRUISE_SPEED"] == 252.
+        # afa feature
+        self.hud_lead = cp.vl["ACC_HUD"]['HUD_LEAD']
 
         # On set, cruise set speed pulses between 254~255 and the set speed prev is set to avoid this.
         ret.cruiseState.speed = self.v_cruise_pcm_prev if cp.vl["ACC_HUD"]["CRUISE_SPEED"] > 160.0 else cp.vl["ACC_HUD"]["CRUISE_SPEED"] * CV.KPH_TO_MS
