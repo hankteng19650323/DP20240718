@@ -408,6 +408,21 @@ class CarInterface(CarInterfaceBase):
         be.type = ButtonType.altButton3
       buttonEvents.append(be)
 
+    if self.CS.cruise_setting != self.CS.prev_cruise_setting:
+      be = car.CarState.ButtonEvent.new_message()
+      be.type = ButtonType.unknown
+      if self.CS.cruise_setting != 0:
+        be.pressed = True
+        but = self.CS.cruise_setting
+      else:
+        be.pressed = False
+        but = self.CS.prev_cruise_setting
+      if but == 1:
+        be.type = ButtonType.altButton1
+      # TODO: more buttons?
+      buttonEvents.append(be)
+    ret.buttonEvents = buttonEvents
+
     # events
     events = self.create_common_events(ret, pcm_enable=False)
     if not self.CS.lkMode or (dragonconf.dpAtl and ret.vEgo <= self.CP.minEnableSpeed):
