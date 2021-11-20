@@ -193,7 +193,7 @@ class CarState(CarStateBase):
 
     # update prevs, update must run once per loop
     self.prev_cruise_buttons = self.cruise_buttons
-    self.prev_lead_distance = self.lead_distance
+    self.cruise_setting = self.cruise_setting
 
     # ******************* parse out can *******************
     # TODO: find wheels moving bit in dbc
