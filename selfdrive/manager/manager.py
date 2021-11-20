@@ -44,6 +44,8 @@ def manager_init():
     ("SpeedLimitPercOffset", "0"),
     ("TurnSpeedControl", "0"),
     ("TurnVisionControl", "0"),
+    ("DisableRadar", "1"),
+    ("DisableRadar_Allow", "1"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
