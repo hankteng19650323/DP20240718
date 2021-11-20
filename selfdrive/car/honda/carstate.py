@@ -184,10 +184,6 @@ class CarState(CarStateBase):
     self.engineRPM = 0
     self.dp_honda_kmh_display = Params().get_bool('dp_honda_kmh_display')
 
-    self.trMode = 1
-    self.read_distance_lines_prev = 4
-    self.lead_distance = 255
-
   def update(self, cp, cp_cam, cp_body):
     ret = car.CarState.new_message()
 
@@ -197,7 +193,7 @@ class CarState(CarStateBase):
 
     # update prevs, update must run once per loop
     self.prev_cruise_buttons = self.cruise_buttons
-    self.prev_lead_distance = self.lead_distance
+    self.prev_cruise_setting = self.cruise_setting
 
     # ******************* parse out can *******************
     # TODO: find wheels moving bit in dbc
@@ -309,11 +305,6 @@ class CarState(CarStateBase):
       if ret.brake > 0.05:
         ret.brakePressed = True
 
-    # when user presses distance button on steering wheel
-    if self.cruise_setting == 3:
-      if cp.vl["SCM_BUTTONS"]["CRUISE_SETTING"] == 0:
-        self.trMode = (self.trMode + 1 ) % 4
-
     # when user presses LKAS button on steering wheel
     if self.cruise_setting == 1:
       if cp.vl["SCM_BUTTONS"]["CRUISE_SETTING"] == 0:
@@ -321,12 +312,6 @@ class CarState(CarStateBase):
           self.lkMode = False
         else:
           self.lkMode = True
-
-    self.prev_cruise_setting = self.cruise_setting
-    self.cruise_setting = cp.vl["SCM_BUTTONS"]['CRUISE_SETTING']
-    self.read_distance_lines = self.trMode + 1
-    if self.read_distance_lines != self.read_distance_lines_prev:
-      self.read_distance_lines_prev = self.read_distance_lines
 
     # TODO: discover the CAN msg that has the imperial unit bit for all other cars
     if self.CP.carFingerprint in (CAR.CIVIC, ):
