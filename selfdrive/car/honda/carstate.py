@@ -312,6 +312,9 @@ class CarState(CarStateBase):
           self.lkMode = False
         else:
           self.lkMode = True
+          
+    self.prev_cruise_setting = self.cruise_setting
+    self.cruise_setting = cp.vl["SCM_BUTTONS"]['CRUISE_SETTING']
 
     # TODO: discover the CAN msg that has the imperial unit bit for all other cars
     if self.CP.carFingerprint in (CAR.CIVIC, ):
