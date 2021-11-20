@@ -377,7 +377,7 @@ class CarInterface(CarInterfaceBase):
     ret.engineRPM = self.CS.engineRPM
 
     # dp - brake lights
-    if self.CS.CP.carFingerprint in HONDA_BOSCH and not openpilotLongitudinalControl:
+    if self.CS.CP.carFingerprint in HONDA_BOSCH and not ret.openpilotLongitudinalControl:
      ret.brakeLights = bool(self.CS.brake_switch or
                             self.CS.brake_lights or self.CS.user_brake > 0.4)
     else:
