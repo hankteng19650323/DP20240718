@@ -42,14 +42,10 @@ You can add support for your car by following guides we have written for [Brand]
 User Data and comma Account
 ------
 
-By default, dragopilot uploads the driving data to our servers. You can also access your data through [comma connect](https://connect.comma.ai/). We use your data to train better models and improve openpilot for everyone.
+By default, dragopilot doesn't upload data to comma servers. You may enable data collection and forwarding to either comma or retropilot.api via toggle under DP general.
 
-dragonpilot is open source software: the user is free to disable data collection if they wish to do so.
-
-openpilot logs the road facing cameras, CAN, GPS, IMU, magnetometer, thermal sensors, crashes, and operating system logs.
+dragonpilot may logs the road facing cameras, CAN, GPS, IMU, magnetometer, thermal sensors, crashes, and operating system logs.
 The driver facing camera is only logged if you explicitly opt-in in settings. The microphone is not recorded.
-
-By using openpilot, you agree to [our Privacy Policy](https://comma.ai/privacy). You understand that use of this software or its related services will generate certain types of user data, which may be logged and stored at the sole discretion of comma. By accepting this agreement, you grant an irrevocable, perpetual, worldwide right to comma for the use of this data.
 
 Safety and Testing
 ----
