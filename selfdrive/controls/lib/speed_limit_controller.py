@@ -16,7 +16,7 @@ _TEMP_INACTIVE_GUARD_PERIOD = 1.  # secs. Time to wait after activation before c
 
 # Lookup table for speed limit percent offset depending on speed.
 _LIMIT_PERC_OFFSET_V = [0.0, 0.1, 0.14 0.11,  0.2, 0.18, 0.17, 0.14, 0.065, 0.0] #20, 33, 35 50, 60, 65, 75, 80,80, 80 mph
-_LIMIT_PERC_OFFSET_BP = [11.0, 13.4, 15.6, 20.1, 22.3, 24.58, 29.0, 31.2, 33.4, 35.7] #20, 33, 35 50, 60, 65, 75, 80,80, 80 mph
+_LIMIT_PERC_OFFSET_BP = [11.0, 13.4, 15.6, 20.1, 22.3, 24.58, 29.0, 31.2, 33.4, 35.7] #20, 33, 35, 45, 60, 65, 75, 80,80, 80 mph
 
 SpeedLimitControlState = log.LongitudinalPlan.SpeedLimitControlState
 EventName = car.CarEvent.EventName
