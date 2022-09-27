@@ -1141,6 +1141,23 @@ FW_VERSIONS = {
       b'57114-TGT-A530\x00\x00',
     ],
   },
+  CAR.ODYSSEY_CHN: {
+    (Ecu.eps, 0x18da30f1, None): [
+      b'39990-T6D-H220\x00\x00',
+    ],
+    (Ecu.gateway, 0x18daeff1, None): [
+      b'38897-T6A-J010\x00\x00',
+    ],
+    (Ecu.combinationMeter, 0x18da60f1, None): [
+      b'78109-T6A-F310\x00\x00',
+    ],
+    (Ecu.fwdRadar, 0x18dab0f1, None): [
+      b'36161-T6A-P040\x00\x00',
+    ],
+    (Ecu.srs, 0x18da53f1, None): [
+      b'77959-T6A-P110\x00\x00',
+    ],
+  },
   CAR.PASSPORT: {
     (Ecu.programmedFuelInjection, 0x18da10f1, None): [
       b'37805-RLV-B220\x00\x00',
