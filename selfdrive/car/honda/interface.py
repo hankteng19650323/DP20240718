@@ -229,7 +229,7 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.82
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.28], [0.08]]
 
-    elif candidate == CAR.ODYSSEY_CHN:
+    elif candidate in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
       ret.mass = 1849.2 + STD_CARGO_KG  # mean of 4 models in kg
       ret.wheelbase = 2.90
       ret.centerToFront = ret.wheelbase * 0.41  # from CAR.ODYSSEY
@@ -297,7 +297,7 @@ class CarInterface(CarInterfaceBase):
     # min speed to enable ACC. if car can do stop and go, then set enabling speed
     # to a negative value, so it won't matter. Otherwise, add 0.5 mph margin to not
     # conflict with PCM acc
-    stop_and_go = candidate in (HONDA_BOSCH | {CAR.CIVIC}) or ret.enableGasInterceptor
+    stop_and_go = candidate in (HONDA_BOSCH | {CAR.CIVIC, ODYSSEY_HYBRID}) or ret.enableGasInterceptor
     ret.minEnableSpeed = -1. if stop_and_go else 25.5 * CV.MPH_TO_MS
 
     # TODO: get actual value, for now starting with reasonable value for
