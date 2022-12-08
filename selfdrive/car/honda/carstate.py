@@ -285,12 +285,11 @@ class CarState(CarStateBase):
       if ret.brake > 0.1:
         ret.brakePressed = True
 
-    if self.CP.carFingerprint in (CAR.CIVIC, CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.CRV_5G, CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH,
+    if self.CP.carFingerprint in (CAR.CIVIC, CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID, CAR.CRV_5G, CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH,
                                     CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G, CAR.HONDA_E):
       ret.brakeLightsDEPRECATED = bool(ret.brakePressed or cp.vl["ACC_CONTROL"]['BRAKE_LIGHTS'] != 0 or ret.brake > 0.4 or ret.parkingBrake) if not self.CP.openpilotLongitudinalControl else \
                          bool(ret.brakePressed or ret.brake > 0.4 or ret.parkingBrake)
-    elif self.CP.carFingerprint in HONDA_BOSCH and self.CP.carFingerprint not in (CAR.CIVIC, CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.CRV_5G, CAR.ACCORD, CAR.ACCORDH, CAR.CIVIC_BOSCH,
-                                    CAR.CIVIC_BOSCH_DIESEL, CAR.CRV_HYBRID, CAR.INSIGHT, CAR.ACURA_RDX_3G, CAR.HONDA_E) and self.CP.carFingerprint not in HONDA_BOSCH_RADARLESS:
+    elif self.CP.carFingerprint in HONDA_BOSCH and self.CP.carFingerprint not in HONDA_BOSCH_RADARLESS:
       ret.brakeLightsDEPRECATED = bool(ret.brakePressed or cp.vl["ACC_CONTROL"]['BRAKE_LIGHTS'] != 0 or ret.brake > 0.4) if not self.CP.openpilotLongitudinalControl else \
                          bool(ret.brakePressed or ret.brake > 0.4)
     else:
