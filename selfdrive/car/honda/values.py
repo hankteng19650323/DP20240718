@@ -857,6 +857,9 @@ FW_VERSIONS = {
       b'39990-TPA-G030\x00\x00',
       b'39990-TPG-A020\x00\x00',
       b'39990-TMA-H020\x00\x00',
+      # adding eps for CRV_HYBRID CHN
+      b'39990-TMA,H020\x00\x00',
+      b'39990,TMA-H020\x00\x00',
     ],
     (Ecu.gateway, 0x18daeff1, None): [
       b'38897-TMA-H110\x00\x00',
@@ -1488,7 +1491,8 @@ DBC = {
   CAR.CRV: dbc_dict('honda_crv_touring_2016_can_generated', 'acura_ilx_2016_nidec'),
   CAR.CRV_5G: dbc_dict('honda_crv_ex_2017_can_generated', None, body_dbc='honda_crv_ex_2017_body_generated'),
   CAR.CRV_EU: dbc_dict('honda_crv_executive_2016_can_generated', 'acura_ilx_2016_nidec'),
-  CAR.CRV_HYBRID: dbc_dict('honda_accord_2018_can_generated', None),
+  # adding back dbc for CRV_HYBRID
+  CAR.CRV_HYBRID: dbc_dict('honda_crv_hybrid_2019_can_generated', None, body_dbc='honda_crv_ex_2017_body_generated'),
   CAR.FIT: dbc_dict('honda_fit_ex_2018_can_generated', 'acura_ilx_2016_nidec'),
   CAR.FREED: dbc_dict('honda_fit_ex_2018_can_generated', 'acura_ilx_2016_nidec'),
   CAR.HRV: dbc_dict('honda_fit_ex_2018_can_generated', 'acura_ilx_2016_nidec'),
