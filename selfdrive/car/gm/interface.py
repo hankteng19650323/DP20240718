@@ -199,12 +199,14 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.TRAILBLAZER:
       ret.mass = 1365. + STD_CARGO_KG
       ret.wheelbase = 2.64
-      ret.steerRatio = 16.8
-      ret.centerToFront = ret.wheelbase * 0.3
+      ret.steerRatio = 17.0
+      ret.centerToFront = ret.wheelbase * 0.42
       tire_stiffness_factor = 1.0
-      ret.steerActuatorDelay = 0.2
-      CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
+      ret.steerActuatorDelay = 0.15
       ret.minSteerSpeed = 0.0
+      ret.minEnableSpeed = -1.  # engage speed is decided by pcm
+      ret.autoResumeSng = True
+      CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
 
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
     # mass and CG position, so all cars will have approximately similar dyn behaviors
