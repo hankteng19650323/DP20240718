@@ -199,7 +199,7 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.TRAILBLAZER:
       ret.mass = 1365. + STD_CARGO_KG
       ret.wheelbase = 2.64
-      ret.steerRatio = 17
+      ret.steerRatio = 16.5
       ret.centerToFront = ret.wheelbase * 0.38  # FIXME: Need to tune more.
       tire_stiffness_factor = 1.0
       ret.steerActuatorDelay = 0.18
