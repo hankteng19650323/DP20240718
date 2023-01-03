@@ -202,7 +202,7 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 17
       ret.centerToFront = ret.wheelbase * 0.38
       tire_stiffness_factor = 1.0
-      ret.steerActuatorDelay = 0.15
+      ret.steerActuatorDelay = 0.18
       ret.minSteerSpeed = -1.
       ret.minEnableSpeed = -1.  # engage speed is decided by pcm
       ret.autoResumeSng = True
