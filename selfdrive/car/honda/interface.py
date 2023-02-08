@@ -59,8 +59,9 @@ class CarInterface(CarInterfaceBase):
       if candidate in HONDA_BOSCH:
         ret.pcmCruise = True
 
-    if candidate == CAR.CRV_5G:
-      ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
+    #if candidate in (CAR.CRV_5G, CAR.CRV_HYBRID,):
+    #  ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
+    ret.enableBsm = True
 
     # Detect Bosch cars with new HUD msgs
     if any(0x33DA in f for f in fingerprint.values()):
@@ -367,8 +368,8 @@ class CarInterface(CarInterfaceBase):
         # keep braking if needed or if the speed is very low
         if ret.vEgo < self.CP.minEnableSpeed + 2.:
           # non loud alert if cruise disables below 25mph as expected (+ a little margin)
-          events.add(EventName.speedTooLow)
-        else:
+          # events.add(EventName.speedTooLow)
+        # else:
           events.add(EventName.cruiseDisabled)
     if self.CS.CP.minEnableSpeed > 0 and ret.vEgo < 0.001:
       events.add(EventName.manualRestart)
