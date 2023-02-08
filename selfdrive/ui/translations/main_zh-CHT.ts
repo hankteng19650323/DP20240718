@@ -428,7 +428,7 @@ When on close will be dynamic but get closer in traffic. Normal is also dynamic 
     </message>
     <message>
         <source>DE2E When Car Speed Below (w/o Lead):</source>
-        <translation type="vanished">切換至 E2E 當車速低於 (無前車)：</translation>
+        <translation type="vanished"> (無前車)當車速低於設定值：切換至DE2E </translation>
     </message>
     <message>
         <source> kph</source>
@@ -440,7 +440,7 @@ When on close will be dynamic but get closer in traffic. Normal is also dynamic 
     </message>
     <message>
         <source>DE2E When Lead Car Speed Below:</source>
-        <translation type="vanished">切換至 E2E 當前車車速低於：</translation>
+        <translation type="vanished">(有前車)當車速低於設定值：切換至DE2E</translation>
     </message>
     <message>
         <source>Dynamic End-to-end</source>
@@ -523,7 +523,7 @@ Reboot required.</source>
     <message>
         <source>when acc set speed below the setting and there is no lead car, e2e will be turned on automatically.
 1 km/h = 0.62 mph</source>
-        <translation type="vanished">當車子的定速低於設定值並且在沒有前車的情形下，系統會自動開啟 E2E 模式。
+        <translation type="vanished">在沒有前車的情形下，當車子的定速低於設定值，系統會自動開啟 E2E 模式。
 1 km/h = 0.62 mph</translation>
     </message>
     <message>
@@ -533,28 +533,28 @@ Reboot required.</source>
     <message>
         <source>when lead car is going below the setting, e2e will be turned on automatically.
 1 km/h = 0.62 mph</source>
-        <translation type="vanished">當前車車速於低於設定值時，系統將自動切換至 E2E 模式。
+        <translation type="vanished">在有前車的情形下，當車速低於設定值，系統將自動切換至 E2E 模式。
 1 km/h = 0.62 mph</translation>
     </message>
     <message>
         <source>DE2E When Car Set Speed Below (w/o Lead):</source>
-        <translation type="vanished">切換至 E2E 當定速低於 (無前車)：</translation>
+        <translation type="vanished">在沒有前車的情形下，當車速低於設定值：切換至 DE2E</translation>
     </message>
     <message>
         <source>E2E When Car Set Speed Below (w/o Lead):</source>
-        <translation type="vanished">切換至 E2E 當定速低於 (無前車)：</translation>
+        <translation type="vanished">在沒有前車的情形下，當車速低於設定值：切換至 E2E</translation>
     </message>
     <message>
         <source>E2E When Lead Car Speed Below:</source>
-        <translation type="vanished">切換至 E2E 當前車車速低於：</translation>
+        <translation type="vanished">在有前車的情形下，當車速低於設定值：切換至 E2E</translation>
     </message>
     <message>
         <source>DE2E Adapt Following Mode</source>
-        <translation>E2E 配合跟車距離控制</translation>
+        <translation>DE2E 配合跟車距離控制</translation>
     </message>
     <message>
         <source>Enable this if you wish to use following dist. mode in DE2E.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果想要由DE2E配合跟車距離控制，請開啟此功能</translation>
     </message>
     <message>
         <source>DE2E Adapt Accel Mode</source>
@@ -562,18 +562,18 @@ Reboot required.</source>
     </message>
     <message>
         <source>Enable this if you wish to use accel mode in DE2E.</source>
-        <translation type="unfinished"></translation>
+         <translation>如果想要由DE2E配合加速模式控制，請開啟此功能</translation>
     </message>
     <message>
         <source>when acc set speed below the setting and there is no lead car, e2e will be turned on automatically. 
 1 km/h = 0.62 mph</source>
-        <translation type="vanished">當車子的定速低於設定值並且在沒有前車的情形下，系統會自動開啟 E2E 模式。
+        <translation type="vanished">在沒有前車的情形下，當車速低於設定值：自動開啟E2E模式。
 1 km/h = 0.62 mph</translation>
     </message>
     <message>
         <source>when lead car is going below the setting, e2e will be turned on automatically. 
 1 km/h = 0.62 mph</source>
-        <translation type="vanished">當前車車速於低於設定值時，系統將自動切換至 E2E 模式。
+        <translation type="vanished">在有前車的情形下，當車速低於設定值：自動開啟E2E模式。。
 1 km/h = 0.62 mph</translation>
     </message>
     <message>
@@ -1391,15 +1391,15 @@ location set</source>
     </message>
     <message>
         <source>PRIME FEATURES:</source>
-        <translation>高級會員特點：</translation>
+        <translation>高級會員享有：</translation>
     </message>
     <message>
         <source>Remote access</source>
-        <translation>遠程訪問</translation>
+        <translation>遠端存取</translation>
     </message>
     <message>
         <source>1 year of storage</source>
-        <translation>一年的雲端行車記錄</translation>
+        <translation>一年的雲端空間</translation>
     </message>
     <message>
         <source>Developer perks</source>
@@ -1714,23 +1714,23 @@ location set</source>
     </message>
     <message>
         <source>ETH</source>
-        <translation></translation>
+        <translation>ETH</translation>
     </message>
     <message>
         <source>2G</source>
-        <translation></translation>
+        <translation>2G</translation>
     </message>
     <message>
         <source>3G</source>
-        <translation></translation>
+        <translation>3G</translation>
     </message>
     <message>
         <source>LTE</source>
-        <translation></translation>
+        <translation>LTE</translation>
     </message>
     <message>
         <source>5G</source>
-        <translation></translation>
+        <translation>5G</translation>
     </message>
     <message>
         <source>%1 m</source>
@@ -1741,7 +1741,7 @@ location set</source>
     <name>SoftwarePanel</name>
     <message>
         <source>Updates are only downloaded while the car is off.</source>
-        <translation>系統更新只會在熄火時下載。</translation>
+        <translation>只會在車輛熄火時下載系統更新檔。</translation>
     </message>
     <message>
         <source>Current Version</source>
@@ -1793,13 +1793,13 @@ location set</source>
     </message>
     <message>
         <source>OpenStreetMap Database Update</source>
-        <translation></translation>
+        <translation>更新OpenStreetMap資料庫</translation>
     </message>
     <message>
         <source>&quot;OpenStreetMap Database Update&quot;
 Your device will reboot and perform a database update based on the region you have selected.
 Reboot now?</source>
-        <translation></translation>
+        <translation>裝置將會重新啟動，並開始下載您選擇區域的OpenStreetMap資料庫</translation>
     </message>
     <message>
         <source>OpenStreetMap Database</source>
@@ -1921,7 +1921,7 @@ Reboot now?</source>
     </message>
     <message>
         <source>Disengage on Accelerator Pedal</source>
-        <translation>油門取消控車</translation>
+        <translation>踩踏油門取消控車</translation>
     </message>
     <message>
         <source>When enabled, pressing the accelerator pedal will disengage openpilot.</source>
@@ -1941,7 +1941,7 @@ Reboot now?</source>
     </message>
     <message>
         <source>Show map on left side when in split screen view.</source>
-        <translation>進入分割畫面後，地圖將會顯示在畫面的左側。</translation>
+        <translation>分割畫面中，地圖將會顯示在畫面的左側。</translation>
     </message>
     <message>
         <source>Experimental Mode</source>
@@ -1953,7 +1953,7 @@ Reboot now?</source>
     </message>
     <message>
         <source>On this car, openpilot defaults to the car&apos;s built-in ACC instead of openpilot&apos;s longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when using experimental openpilot longitudinal control.</source>
-        <translation>在本車輛中，openpilot預設將使用原車內建的ACC系統，而非openpilot縱向控制。開啟此開關來啟用openpilot縱向控制，使用此選項時建議一併啟用實驗模式。</translation>
+        <translation>預設將使用原車內建的ACC系統。開啟此開關後由openpilot接管縱向控制，使用此選項時建議一併啟用實驗模式。</translation>
     </message>
     <message>
         <source>Experimental mode is currently unavailable on this car, since the car&apos;s stock ACC is used for longitudinal control.</source>
@@ -1961,7 +1961,7 @@ Reboot now?</source>
     </message>
     <message>
         <source>Enable experimental longitudinal control to allow experimental mode.</source>
-        <translation>啟用實驗性縱向控制以使用實驗模式。</translation>
+        <translation>啟用實驗性縱向控制＊此為實驗性質地體驗模式＊。</translation>
     </message>
     <message>
         <source>openpilot defaults to driving in &lt;b&gt;chill mode&lt;/b&gt;. Experimental mode enables &lt;b&gt;alpha-level features&lt;/b&gt; that aren&apos;t ready for chill mode. Experimental features are listed below:</source>
@@ -1973,7 +1973,7 @@ Reboot now?</source>
     </message>
     <message>
         <source>Let the driving model control the gas and brakes. openpilot will drive as it thinks a human would, including stopping for red lights and stop signs. Since the driving model decides the speed to drive, the set speed will only act as an upper bound. This is an alpha quality feature; mistakes should be expected.</source>
-        <translation>讓駕駛模型來控制油門及煞車。openpilot將會模擬人類的駕駛行為，包含在看見紅燈及停止標示時停車。由於車速將由駕駛模型決定，因此您設定的時速將成為速度上限。本功能仍在早期實驗階段，請預期模型有犯錯的可能性。</translation>
+        <translation>模擬人類的駕駛行為，將控制油門及煞車，在看見紅燈及停止標示時試著停車。您設定的時速將成為模擬駕駛的速度上限。＊留意＊本功能仍在早期實驗階段，請隨時保持留意本車週邊所有狀態。</translation>
     </message>
     <message>
         <source>New Driving Visualization</source>
@@ -2031,7 +2031,7 @@ Reboot now?</source>
     <name>WifiUI</name>
     <message>
         <source>Scanning for networks...</source>
-        <translation>掃描無線網路中...</translation>
+        <translation>尋找無線網路中...</translation>
     </message>
     <message>
         <source>CONNECTING...</source>
