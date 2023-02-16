@@ -1,6 +1,6 @@
 dragonpilot [2023.2.15]
 =======================
-* Synced with openpilot master 2022.12.14 commits.
+* Synced with openpilot master 2024.2.14 commits.
 * Comma 0.9.1 release
   * New driving model
     * 30% improved height estimation resulting in better driving performance for tall cars
