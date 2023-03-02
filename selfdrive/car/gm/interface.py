@@ -36,14 +36,21 @@ class CarInterface(CarInterfaceBase):
     desired_angle *= 0.09760208
     sigmoid = desired_angle / (1 + fabs(desired_angle))
     return 0.04689655 * sigmoid * (v_ego + 10.028217)
+  
+  # Copy from volt
+  @staticmethod
+  def get_steer_feedforward_trailblazer(desired_angle, v_ego):
+    desired_angle *= 0.02904609
+    sigmoid = desired_angle / (1 + fabs(desired_angle))
+    return 0.10006696 * sigmoid * (v_ego + 3.12485927)
 
   def get_steer_feedforward_function(self):
     if self.CP.carFingerprint == CAR.VOLT:
       return self.get_steer_feedforward_volt
-    elif self.CP.carFingerprint == CAR.TRAILBLAZER:
-      return self.get_steer_feedforward_volt
     elif self.CP.carFingerprint == CAR.ACADIA:
       return self.get_steer_feedforward_acadia
+    elif self.CP.carFingerprint == CAR.TRAILBLAZER:
+      return self.get_steer_feedforward_trailblazer
     else:
       return CarInterfaceBase.get_steer_feedforward_default
 
@@ -252,7 +259,6 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 17.7
       ret.centerToFront = ret.wheelbase * 0.45
       tire_stiffness_factor = 1.0
-      #ret.steerActuatorDelay = 0.13
       ret.minSteerSpeed = -1.
       ret.minEnableSpeed = -1.  # engage speed is decided by pcm
 
