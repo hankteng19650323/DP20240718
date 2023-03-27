@@ -192,6 +192,8 @@ class CarInterface(CarInterfaceBase):
       ret.centerToFront = ret.wheelbase * 0.4
       tire_stiffness_factor = 1.0
       ret.steerActuatorDelay = 0.2
+      ret.minSteerSpeed = -1.
+      ret.minEnableSpeed = -1.  # engage speed is decided by pcm
       CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
 
     elif candidate == CAR.SILVERADO:
