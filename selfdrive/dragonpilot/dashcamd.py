@@ -26,7 +26,7 @@ import datetime
 from common.realtime import sec_since_boot
 
 DASHCAM_VIDEOS_PATH = '/data/media/0/dashcam/'
-DASHCAM_DURATION = 180 # max is 180
+DASHCAM_DURATION = 60 # max is 60
 DASHCAM_BIT_RATES = 4000000 # max is 4000000
 DASHCAM_MAX_SIZE_PER_FILE = DASHCAM_BIT_RATES/8*DASHCAM_DURATION # 4Mbps / 8 * 180 = 90MB per 180 seconds
 DASHCAM_FREESPACE_LIMIT = 15 # we start cleaning up footage when freespace is below 15%
