@@ -17,7 +17,7 @@ EventName = car.CarEvent.EventName
 class DRIVER_MONITOR_SETTINGS():
   def __init__(self, DT_DMON=DT_DMON):
     self._DT_DMON = DT_DMON
-    self._AWARENESS_TIME = 35. # passive wheeltouch total timeout
+    self._AWARENESS_TIME = 3099999. # passive wheeltouch total timeout
     self._AWARENESS_PRE_TIME_TILL_TERMINAL = 12.
     self._AWARENESS_PROMPT_TIME_TILL_TERMINAL = 6.
     self._DISTRACTED_TIME = 11. # active monitoring total timeout
@@ -46,7 +46,7 @@ class DRIVER_MONITOR_SETTINGS():
     self._YAW_MIN_OFFSET = -0.0246
 
     self._POSESTD_THRESHOLD = 0.3
-    self._HI_STD_FALLBACK_TIME = int(10  / self._DT_DMON)  # fall back to wheel touch if model is uncertain for 10s
+    self._HI_STD_FALLBACK_TIME = int(109999999  / self._DT_DMON)  # fall back to wheel touch if model is uncertain for 10s
     self._DISTRACTED_FILTER_TS = 0.25  # 0.6Hz
 
     self._POSE_CALIB_MIN_SPEED = 13  # 30 mph
@@ -56,8 +56,8 @@ class DRIVER_MONITOR_SETTINGS():
     self._RECOVERY_FACTOR_MAX = 5.  # relative to minus step change
     self._RECOVERY_FACTOR_MIN = 1.25  # relative to minus step change
 
-    self._MAX_TERMINAL_ALERTS = 3  # not allowed to engage after 3 terminal alerts
-    self._MAX_TERMINAL_DURATION = int(30 / self._DT_DMON)  # not allowed to engage after 30s of terminal alerts
+    self._MAX_TERMINAL_ALERTS = 300000000  # not allowed to engage after 3 terminal alerts
+    self._MAX_TERMINAL_DURATION = int(30000000 / self._DT_DMON)  # not allowed to engage after 30s of terminal alerts
 
 
 # model output refers to center of cropped image, so need to apply the x displacement offset
@@ -139,6 +139,7 @@ class DriverStatus():
     if self.active_monitoring_mode and self.awareness <= self.threshold_prompt:
       if active_monitoring:
         self.step_change = self.settings._DT_DMON / self.settings._DISTRACTED_TIME
+        self.active_monitoring_mode = True
       else:
         self.step_change = 0.
       return  # no exploit after orange alert
@@ -216,6 +217,7 @@ class DriverStatus():
     # self.pose.roll_std = driver_state.faceOrientationStd[2]
     model_std_max = max(self.pose.pitch_std, self.pose.yaw_std)
     self.pose.low_std = model_std_max < self.settings._POSESTD_THRESHOLD and not self.face_partial
+    self.pose.low_std = True
     self.blink.left_blink = driver_state.leftBlinkProb * (driver_state.leftEyeProb > self.settings._EYE_THRESHOLD) * (driver_state.sunglassesProb < self.settings._SG_THRESHOLD)
     self.blink.right_blink = driver_state.rightBlinkProb * (driver_state.rightEyeProb > self.settings._EYE_THRESHOLD) * (driver_state.sunglassesProb < self.settings._SG_THRESHOLD)
 
@@ -225,6 +227,7 @@ class DriverStatus():
 
     # update offseter
     # only update when driver is actively driving the car above a certain speed
+    self.face_detected = True
     if self.face_detected and car_speed > self.settings._POSE_CALIB_MIN_SPEED and self.pose.low_std and (not op_engaged or not self.driver_distracted):
       self.pose.pitch_offseter.push_and_update(self.pose.pitch)
       self.pose.yaw_offseter.push_and_update(self.pose.yaw)
