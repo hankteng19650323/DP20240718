@@ -456,13 +456,6 @@ More linear steering experience.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use at your own risk! Your drive will not upload but you can find them under /data/media/0/fakedata you will not be ban but we just don&apos;t upload since comma does not use data from fork but it will be stored locally.
-1 = Stock Long
-2 = OP Long
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable this if you wish to use following dist. mode in DE2E.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -545,6 +538,23 @@ Your Vehicle may not support all the options, YMMV.</source>
     </message>
     <message>
         <source>This feature will let you use alternative lateral controller at higher set speed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use at your own risk!
+1 = Stock Long
+2 = OP Long
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual Lane Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabling this will allow lane change manually when blinker is on.
+NOTES: Once LCA/ALCA is enabled, those settings will override manual lane change.
+e.g. If you have this option on and LCA at 20km/hr, ALCA at 40km/hr, speed below 20km/hr will be manual lane change.<byte value="x8"/> If you disable LCA/ALCA and have this option on, manual lane change will apply to ALL SPEED.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1431,16 +1441,17 @@ trabalho definido</translation>
     </message>
     <message>
         <source>Unable to mount data partition. Partition may be corrupted. Press confirm to erase and reset your device.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível montar a partição de dados. Partição corrompida. Confirme para apagar e redefinir o dispositivo.</translation>
     </message>
     <message>
         <source>Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pressione confirmar para apagar todo o conteúdo e configurações. Pressione cancelar para voltar.</translation>
     </message>
     <message>
         <source>Resetting device...
 This may take up to a minute.</source>
-        <translation type="unfinished"></translation>
+        <translation>Redefinindo o dispositivo
+Isso pode levar até um minuto.</translation>
     </message>
 </context>
 <context>
@@ -1566,11 +1577,11 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>No custom software found at this URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há software personalizado nesta URL.</translation>
     </message>
     <message>
         <source>Something went wrong. Reboot the device.</source>
-        <translation type="unfinished"></translation>
+        <translation>Algo deu errado. Reinicie o dispositivo.</translation>
     </message>
 </context>
 <context>

@@ -680,7 +680,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.steerTempUnavailable: {
-    ET.PERMANENT: soft_disable_alert(_("Steering Temporarily Unavailable")),
     ET.SOFT_DISABLE: soft_disable_alert(_("Steering Temporarily Unavailable")),
     ET.NO_ENTRY: NoEntryAlert(_("Steering Temporarily Unavailable")),
   },
@@ -913,9 +912,9 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.PERMANENT: Alert(
       _("Reverse\nGear"),
       "",
-      AlertStatus.normal, AlertSize.none,
+      AlertStatus.normal, AlertSize.full,
       Priority.LOWEST, VisualAlert.none, AudibleAlert.none, .2, creation_delay=0.5),
-    # ET.USER_DISABLE: ImmediateDisableAlert(_("Reverse Gear")),
+    ET.USER_DISABLE: ImmediateDisableAlert(_("Reverse Gear")),
     ET.NO_ENTRY: NoEntryAlert(_("Reverse Gear")),
   },
 
@@ -979,5 +978,14 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       AlertStatus.normal, AlertSize.none,
       Priority.MID, VisualAlert.none,
       AudibleAlert.disengage, .2),
+  },
+
+  # dp - use for manual lane change
+  EventName.manualSteeringRequiredBlinkersOn: {
+    ET.PERMANENT: Alert(
+      _("STEERING REQUIRED: Blinkers ON"),
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .0, alert_rate=0.25),
   },
 }
