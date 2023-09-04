@@ -23,7 +23,7 @@ MAX_USER_TORQUE = 500
 GearShifter = car.CarState.GearShifter
 UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
 LOCK_CMD = b'\x40\x05\x30\x11\x00\x80\x00\x00'
-LOCK_AT_SPEED = 10 * CV.KPH_TO_MS
+LOCK_AT_SPEED = 1 * CV.KPH_TO_MS
 
 class CarController:
   def __init__(self, dbc_name, CP, VM):
@@ -51,6 +51,7 @@ class CarController:
     self.lock_once = False
     self.lat_controller_type = None
     self.lat_controller_type_prev = None
+    self.unlock_all = False
 
   def update(self, CC, CS, now_nanos, dragonconf):
     if dragonconf is not None:
@@ -132,6 +133,11 @@ class CarController:
     # https://github.com/AlexandreSato/animalpilot/blob/personal/doors.py
     if self.dp_toyota_auto_lock or self.dp_toyota_auto_unlock:
       gear = CS.out.gearShifter
+      if gear == GearShifter.park:
+        if  CS.out.doorOpen and not self.unlock_all:
+          can_sends.append(make_can_msg(0x750, UNLOCK_CMD, 0))
+          self.unlock_all = True
+
       if self.last_gear != gear and gear == GearShifter.park:
         if self.dp_toyota_auto_unlock:
           can_sends.append(make_can_msg(0x750, UNLOCK_CMD, 0))
@@ -139,6 +145,7 @@ class CarController:
           self.lock_once = False
       elif self.dp_toyota_auto_lock and not CS.out.doorOpen and gear == GearShifter.drive and not self.lock_once and CS.out.vEgo >= LOCK_AT_SPEED:
         can_sends.append(make_can_msg(0x750, LOCK_CMD, 0))
+        self.unlock_all = False
         self.lock_once = True
       self.last_gear = gear
 
