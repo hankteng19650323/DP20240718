@@ -31,6 +31,7 @@ DASHCAM_BIT_RATES = 4000000 # max is 4000000
 DASHCAM_MAX_SIZE_PER_FILE = DASHCAM_BIT_RATES/8*DASHCAM_DURATION # 4Mbps / 8 * 180 = 90MB per 180 seconds
 DASHCAM_FREESPACE_LIMIT = 15 # we start cleaning up footage when freespace is below 15%
 DASHCAM_KEPT_MIN_SIZE = DASHCAM_MAX_SIZE_PER_FILE * 240 # 12 hrs of video = 21GB
+DASHCAM_KEPT_MIN_CNT = 10 # keep at least 10 files, ~30 mins / 1GB
 
 class Dashcamd():
   def __init__(self):
@@ -39,6 +40,8 @@ class Dashcamd():
     self.dashcam_next_time = 0
     self.started = False
     self.free_space = 1.
+    self.first_run = True
+    self.index = 0
 
   def run(self, started, free_space):
     self.free_space = free_space
@@ -46,9 +49,30 @@ class Dashcamd():
       self.stop()
     self.started = started
     self.make_folder()
+
+    if self.index == 0:
+      fo = open(DASHCAM_VIDEOS_PATH + "index.txt", "a+")
+      fo.seek(0,0)
+      st = fo.read(16)
+      fo.truncate(0)
+      print(st)
+      self.index = 0
+      if len(st) > 0:
+        self.index = int(st)
+      else:
+        self.index = 100
+
+      self.index = self.index + 1
+      fo.seek(0,0)
+      fo.write(str(self.index))
+      fo.close()
+      
+
     if self.dashcam_folder_exists:
       self.start()
-      self.clean_up()
+      if not self.first_run:
+        self.clean_up()
+      self.first_run = False
 
   def stop(self):
     os.system("killall -SIGINT screenrecord")
@@ -72,7 +96,7 @@ class Dashcamd():
       ts = sec_since_boot()
       if ts >= self.dashcam_next_time:
         now = datetime.datetime.now()
-        file_name = now.strftime("%Y-%m-%d_%H-%M-%S")
+        file_name = str(self.index) + "_" + now.strftime("%Y-%m-%d_%H-%M-%S")
         os.system("LD_LIBRARY_PATH= screenrecord --bit-rate %s --time-limit %s %s%s.mp4 &" % (DASHCAM_BIT_RATES, DASHCAM_DURATION, DASHCAM_VIDEOS_PATH, file_name))
         self.dashcam_next_time = ts + DASHCAM_DURATION - 1
     else:
@@ -93,3 +117,21 @@ class Dashcamd():
     except (IndexError, FileNotFoundError, OSError):
       val = 0
     return val
+
+  # if __name__ == '__main__':
+  #   fo = open(DASHCAM_VIDEOS_PATH + "index.txt", "a+")
+  #   fo.seek(0,0)
+  #   st = fo.read(16)
+  #   fo.truncate(0)
+  #   print(st)
+  #   index = 0
+  #   if len(st) > 0:
+  #     index = int(st)
+  #   else:
+  #     index = 100
+    
+  #   index = index + 1
+  #   fo.seek(0,0)
+  #   fo.write(str(index))
+  #   fo.close()
+  #   print(index)
