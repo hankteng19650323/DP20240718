@@ -80,11 +80,11 @@ class CarInterface(CarInterfaceBase):
     else:
       ret.transmissionType = TransmissionType.automatic
 
-    ret.longitudinalTuning.deadzoneBP = [0.]
-    ret.longitudinalTuning.deadzoneV = [0.15]
+    ret.longitudinalTuning.deadzoneBP = [0., 8.05]
+    ret.longitudinalTuning.deadzoneV = [.0, .14]
 
-    ret.longitudinalTuning.kpBP = [5., 35.]
-    ret.longitudinalTuning.kiBP = [0.]
+    ret.longitudinalTuning.kpBP = [0., 10., 20., 30., 40., 50., 60., 70]  # kpV의 구간
+    ret.longitudinalTuning.kiBP = [0., 10., 20., 30., 40., 50., 60., 70]  # kiV의 구간
 
     if candidate in CAMERA_ACC_CAR:
       ret.experimentalLongitudinalAvailable = True
@@ -96,11 +96,13 @@ class CarInterface(CarInterfaceBase):
       ret.minSteerSpeed = 10 * CV.KPH_TO_MS
 
       # Tuning for experimental long
-      ret.longitudinalTuning.kpV = [2.0, 1.5]
-      ret.longitudinalTuning.kiV = [0.72]
-      ret.stoppingDecelRate = 2.0  # reach brake quickly after enabling
-      ret.vEgoStopping = 0.25
-      ret.vEgoStarting = 0.25
+      ret.longitudinalTuning.kpV = [0.25, 0.5, 0.75, 0.75, 1.0, 1.0, 1.25, 1.25]
+      ret.longitudinalTuning.kiV = [.03, .06, .09, .12, .15, .18, 0.21, 0.24]
+      ret.stoppingDecelRate = 0.5  # reach brake quickly after enabling
+      ret.vEgoStopping = 0.5  # 0.25
+      ret.vEgoStarting = 0.5  # 0.25
+      #######################################################################
+      #######################################################################
 
       if experimental_long:
         ret.pcmCruise = False
@@ -243,12 +245,13 @@ class CarInterface(CarInterfaceBase):
       CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
 
     elif candidate == CAR.TRAILBLAZER:
-      ret.mass = 1345.
-      ret.wheelbase = 2.64
+      ret.mass = 1365.
+      ret.wheelbase = 2.7
       ret.steerRatio = 16.8
       ret.centerToFront = ret.wheelbase * 0.4
       ret.tireStiffnessFactor = 1.0
       ret.steerActuatorDelay = 0.2
+      ret.autoResumeSng = True
       CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
 
     return ret
