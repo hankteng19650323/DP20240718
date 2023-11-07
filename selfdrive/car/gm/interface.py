@@ -283,7 +283,8 @@ class CarInterface(CarInterfaceBase):
                                        self.CP.networkLocation == NetworkLocation.fwdCamera):
       events.add(EventName.belowEngageSpeed)
     if ret.cruiseState.standstill:
-      events.add(EventName.resumeRequired)
+      #events.add(EventName.resumeRequired)
+      events.add(EventName.overheat_alert)
     if ret.vEgo < self.CP.minSteerSpeed:
       events.add(EventName.belowSteerSpeed)
 

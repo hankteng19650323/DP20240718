@@ -192,7 +192,7 @@ def thermald_thread(end_event, hw_queue) -> None:
     nvme_temps=[],
     modem_temps=[],
   )
-
+#################################################
   all_temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML, initialized=False)
   offroad_temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML, initialized=False)
   should_start_prev = False

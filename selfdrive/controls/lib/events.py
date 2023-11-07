@@ -239,14 +239,8 @@ def below_engage_speed_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.
 
 
 def below_steer_speed_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
-  cpu = max(sm['deviceState'].cpuTempC, default=0.)
-  gpu = max(sm['deviceState'].gpuTempC, default=0.)
-  temp = max((cpu, gpu, sm['deviceState'].memoryTempC))
-
   return Alert(
     _("조향 비활성화 {speed}이하").format(speed=get_display_speed(CP.minSteerSpeed, metric)),
-    _("온도"), f"{cpu:.0f} °C",
-    f"{gpu:.0f} °C",
     "",
     AlertStatus.userPrompt, AlertSize.small,
     Priority.LOW, VisualAlert.steerRequired, AudibleAlert.prompt, 0.4)
@@ -312,7 +306,7 @@ def overheat_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster,
   cpu = max(sm['deviceState'].cpuTempC, default=0.)
   gpu = max(sm['deviceState'].gpuTempC, default=0.)
   temp = max((cpu, gpu, sm['deviceState'].memoryTempC))
-  return NormalPermanentAlert(_("System Overheated"), f"{temp:.0f} °C")
+  return NormalPermanentAlert(_("System Temp"), f"{temp:.0f} °C")
 
 
 def low_memory_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
