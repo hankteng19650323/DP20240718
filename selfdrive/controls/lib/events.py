@@ -198,7 +198,7 @@ class StartupAlert(Alert):
   def __init__(self, alert_text_1: str, alert_text_2: str = _("أبق يديك على الدركسون وعينيك على الطريق"), alert_status=AlertStatus.normal):
     super().__init__(alert_text_1, alert_text_2,
                      alert_status, AlertSize.mid,
-                     Priority.LOWER, VisualAlert.none, AudibleAlert.none, 10.),
+                     Priority.LOWER, VisualAlert.none, AudibleAlert.none, 5.),
 
 
 # ********** helper functions **********
@@ -247,6 +247,7 @@ def below_steer_speed_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.S
 
 
 def calibration_incomplete_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
+  first_word = _('Recalibration') if sm['liveCalibration'].calStatus == log.LiveCalibrationData.Status.recalibrating else _('Calibration')
   return Alert(
     _("قيد المعايرة: %d%%") % sm['liveCalibration'].calPerc,
     _("قد فوق %s") % get_display_speed(MIN_SPEED_FILTER, metric),
@@ -684,6 +685,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert(_("التوجيه غير متاح مؤقتًا")),
   },
 
+  EventName.steerTimeLimit: {
+    ET.SOFT_DISABLE: soft_disable_alert("حد زمن توجيه المركبة"),
+    ET.NO_ENTRY: NoEntryAlert("حد زمن توجيه المركبة"),
+  },
+
   EventName.outOfSpace: {
     ET.PERMANENT: out_of_space_alert,
     ET.NO_ENTRY: NoEntryAlert(_("الذاكرة ممتلئة")),
@@ -738,6 +744,12 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert(_("المعايرة غير صحيحة: أعد تثبيت الجهاز وأعايره مرة أخرى")),
   },
 
+  EventName.calibrationRecalibrating: {
+    ET.PERMANENT: calibration_incomplete_alert,
+    ET.SOFT_DISABLE: soft_disable_alert("تم اكتشاف إعادة تركيب الجهاز: جارٍ إعادة المعايرة"),
+    ET.NO_ENTRY: NoEntryAlert("تم الكشف عن إعادة التركيب: جار إعادة المعايرة"),
+  },
+  
   EventName.calibrationIncomplete: {
     ET.PERMANENT: calibration_incomplete_alert,
     ET.SOFT_DISABLE: soft_disable_alert(_("اكتشاف إعادة تثبيت الجهاز: إعادة المعايرة")),
@@ -837,10 +849,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert(_("خطاء في نظام التحكم بالسرعة: أعد تشغيل السيارة")),
   },
 
-  EventName.accFaultedTemp: {
-    ET.NO_ENTRY: NoEntryAlert("عدم تطابق في التحكم"),
-  },
-
   EventName.controlsMismatch: {
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("عدم تطابق في التحكم")),
     ET.NO_ENTRY: NoEntryAlert(_("عدم تطابق في التحكم")),
@@ -900,12 +908,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("عطل في نظام مساعد الحفاظ على المسار (LKAS): أعد تشغيل السيارة")),
     ET.PERMANENT: NormalPermanentAlert(_("عطل في نظام مساعد الحفاظ على المسار (LKAS): قم بإعادة تشغيل السيارة للتفعيل")),
     ET.NO_ENTRY: NoEntryAlert(_("خلل في نظام الحفاظ على المسار (LKAS): أعد تشغيل السيارة")),
-  },
-
-  EventName.brakeUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("عطل في نظام المثبت السرعة: أعد تشغيل السيارة")),
-    ET.PERMANENT: NormalPermanentAlert(_("عطل في نظام المثبت السرعة: أعد تشغيل السيارة للتفعيل")),
-    ET.NO_ENTRY: NoEntryAlert(_("عطل في نظام المثبت السرعة: أعد تشغيل السيارة")),
   },
 
   EventName.reverseGear: {
@@ -970,14 +972,10 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert(_("نظام مساعدة الحفاظ على المسار (LKAS) معطل")),
   },
 
-  # dp - use for atl alert
-  EventName.communityFeatureDisallowedDEPRECATED: {
-    ET.OVERRIDE_LATERAL: Alert(
-      "",
-      "",
-      AlertStatus.normal, AlertSize.none,
-      Priority.MID, VisualAlert.none,
-      AudibleAlert.disengage, .2),
+  EventName.vehicleSensorsInvalid: {
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("حساسات المركبة لا تعمل")),
+    ET.PERMANENT: NormalPermanentAlert(_("حساسات المركبة قيد المعايرة"), _("قُد للمعايرة")),
+    ET.NO_ENTRY: NoEntryAlert(_("حساسات المركبة لا تعمل"), _("قُد للمعايرة")),
   },
 
   # dp - use for manual lane change
