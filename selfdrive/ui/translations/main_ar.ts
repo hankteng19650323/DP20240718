@@ -60,22 +60,22 @@
     </message>
     <message>
         <source>Cellular Metered</source>
-        <translation type="unfinished"></translation>
+        <translation>اتصال الخلوي المدموج</translation>
     </message>
     <message>
         <source>Prevent large data uploads when on a metered connection</source>
-        <translation type="unfinished"></translation>
+        <translation>منع رفع كميات كبيرة من البيانات عند استخدام اتصال بالإنترنت المدموج</translation>
     </message>
 </context>
 <context>
     <name>AnnotatedCameraWidget</name>
     <message>
         <source>km/h</source>
-        <translation>km/h</translation>
+        <translation>كلم/س</translation>
     </message>
     <message>
         <source>mph</source>
-        <translation>mph</translation>
+        <translation>ميل</translation>
     </message>
     <message>
         <source>MAX</source>
@@ -453,11 +453,11 @@ location set</source>
     <name>PairingPopup</name>
     <message>
         <source>Pair your device to your comma account</source>
-        <translation>قم بإقران جهازك بحساب comma الخاص بك</translation>
+        <translation>قم بإقران جهازك بحساب nmk الخاص بك</translation>
     </message>
     <message>
         <source>Go to https://connect.comma.ai on your phone</source>
-        <translation>اذهب إلى https://connect.comma.ai من هاتفك</translation>
+        <translation>اذهب إلى https://connect.nmk.sa من هاتفك</translation>
     </message>
     <message>
         <source>Click &quot;add new device&quot; and scan the QR code on the right</source>
@@ -465,7 +465,7 @@ location set</source>
     </message>
     <message>
         <source>Bookmark connect.comma.ai to your home screen to use it like an app</source>
-        <translation>ضع إشارة مرجعية على connect.comma.ai على شاشتك الرئيسية لاستخدامه مثل أي تطبيق</translation>
+        <translation>ضع إشارة مرجعية على connect.nmk.sa على شاشتك الرئيسية لاستخدامه مثل أي تطبيق</translation>
     </message>
 </context>
 <context>
@@ -476,11 +476,11 @@ location set</source>
     </message>
     <message>
         <source>Become a comma prime member at connect.comma.ai</source>
-        <translation>كن عضوًا comme prime في connect.comma.ai</translation>
+        <translation>كن عضوًا comme prime في connect.nmk.sa</translation>
     </message>
     <message>
         <source>PRIME FEATURES:</source>
-        <translation>ميزات PRIME:</translation>
+        <translation>ميزات nmk Prime:</translation>
     </message>
     <message>
         <source>Remote access</source>
@@ -503,15 +503,15 @@ location set</source>
     </message>
     <message>
         <source>comma prime</source>
-        <translation>comma prime</translation>
+        <translation>nmk prime</translation>
     </message>
     <message>
         <source>CONNECT.COMMA.AI</source>
-        <translation>CONNECT.COMMA.AI</translation>
+        <translation>CONNECT.nmk.sa</translation>
     </message>
     <message>
         <source>COMMA POINTS</source>
-        <translation>COMMA POINTS</translation>
+        <translation>NMK POINTS</translation>
     </message>
 </context>
 <context>
@@ -526,11 +526,11 @@ location set</source>
     </message>
     <message>
         <source>dashcam</source>
-        <translation>dashcam</translation>
+        <translation>داش كام</translation>
     </message>
     <message>
         <source>openpilot</source>
-        <translation>openpilot</translation>
+        <translation>القائد الآلي</translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
@@ -687,7 +687,7 @@ location set</source>
     </message>
     <message>
         <source>Dashcam</source>
-        <translation>Dashcam</translation>
+        <translation>داش كام</translation>
     </message>
     <message>
         <source>Custom Software</source>
@@ -730,7 +730,7 @@ location set</source>
     </message>
     <message>
         <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
-        <translation>قم بإقران جهازك بفاصلة connect (connect.comma.ai) واطلب عرض comma prime الخاص بك.</translation>
+        <translation>قم بإقران جهازك بفاصلة connect (connect.nmk.sa) واطلب عرض nmk prime الخاص بك.</translation>
     </message>
     <message>
         <source>Pair device</source>
@@ -781,7 +781,7 @@ location set</source>
     </message>
     <message>
         <source>PANDA</source>
-        <translation>PANDA</translation>
+        <translation>الباندا</translation>
     </message>
     <message>
         <source>GPS</source>
@@ -824,11 +824,11 @@ location set</source>
     <name>SoftwarePanel</name>
     <message>
         <source>Git Branch</source>
-        <translation type="vanished">Git Branch</translation>
+        <translation type="vanished">الفرع</translation>
     </message>
     <message>
         <source>Git Commit</source>
-        <translation type="vanished">Git Commit</translation>
+        <translation type="vanished">التعديل</translation>
     </message>
     <message>
         <source>OS Version</source>
@@ -844,7 +844,7 @@ location set</source>
     </message>
     <message>
         <source>The last time openpilot successfully checked for an update. The updater only runs while the car is off.</source>
-        <translation type="vanished">آخر مرة نجح برنامج openpilot في التحقق من التحديث. يعمل المحدث فقط أثناء إيقاف تشغيل السيارة.</translation>
+        <translation type="vanished">آخر مرة نجح برنامج القائد الآلي في التحقق من التحديث. يعمل المحدث فقط أثناء إيقاف تشغيل السيارة.</translation>
     </message>
     <message>
         <source>Check for Update</source>
@@ -931,7 +931,7 @@ location set</source>
     </message>
     <message>
         <source>Warning: This grants SSH access to all public keys in your GitHub settings. Never enter a GitHub username other than your own. A comma employee will NEVER ask you to add their GitHub username.</source>
-        <translation>تحذير: هذا يمنح SSH الوصول إلى جميع المفاتيح العامة في إعدادات GitHub. لا تدخل أبدًا اسم مستخدم GitHub بخلاف اسم المستخدم الخاص بك. لن يطلب منك موظف comma أبدًا إضافة اسم مستخدم GitHub الخاص به.</translation>
+        <translation>تحذير: هذا يمنح SSH الوصول إلى جميع المفاتيح العامة في إعدادات GitHub. لا تدخل أبدًا اسم مستخدم GitHub بخلاف اسم المستخدم الخاص بك. لن يطلب منك موظف nmk أبدًا إضافة اسم مستخدم GitHub الخاص به.</translation>
     </message>
     <message>
         <source>ADD</source>
@@ -992,7 +992,7 @@ location set</source>
     <name>TogglesPanel</name>
     <message>
         <source>Enable openpilot</source>
-        <translation>تمكين openpilot</translation>
+        <translation>تمكين القائد الآلي</translation>
     </message>
     <message>
         <source>Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature. Changing this setting takes effect when the car is powered off.</source>
@@ -1048,11 +1048,11 @@ location set</source>
     </message>
     <message>
         <source>openpilot Longitudinal Control</source>
-        <translation type="vanished">openpilot التحكم الطولي</translation>
+        <translation type="vanished">القائد الآلي التحكم الطولي</translation>
     </message>
     <message>
         <source>openpilot will disable the car&apos;s radar and will take over control of gas and brakes. Warning: this disables AEB!</source>
-        <translation type="vanished">سوف يقوم برنامج openpilot بتعطيل رادار السيارة وسيتولى التحكم في الغاز والمكابح. تحذير: هذا يعطل AEB!</translation>
+        <translation type="vanished">سوف يقوم برنامج القائد الآلي بتعطيل رادار السيارة وسيتولى التحكم في الغاز والمكابح. تحذير: هذا يعطل AEB!</translation>
     </message>
     <message>
         <source>🌮 End-to-end longitudinal (extremely alpha) 🌮</source>
@@ -1060,23 +1060,23 @@ location set</source>
     </message>
     <message>
         <source>Experimental openpilot Longitudinal Control</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">القائد الآلي بالوظع التجريبي مع المتحكم الطويل</translation>
     </message>
     <message>
         <source>&lt;b&gt;WARNING: openpilot longitudinal control is experimental for this car and will disable AEB.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;b&gt;تحذير: التحكم الطولي في القائد الآلي تجريبي لهذه السيارة وسيتم تعطيل نظام توقف التصادم التلقائي (AEB).&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Let the driving model control the gas and brakes. openpilot will drive as it thinks a human would. Super experimental.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اسمح لنموذج القيادة بالتحكم في دواسة البنزين والفرامل. سيقود القائد الآلي بما يعتقد أن الإنسان سيفعله. هذا تجريبي للغاية</translation>
     </message>
     <message>
         <source>openpilot longitudinal control is not currently available for this car.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">التحكم الطولي في القائد الآلي غير متاح حاليًا لهذه السيارة</translation>
     </message>
     <message>
         <source>Enable experimental longitudinal control to enable this.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">قم بتمكين التحكم الطولي التجريبي لتمكين هذا</translation>
     </message>
 </context>
 <context>

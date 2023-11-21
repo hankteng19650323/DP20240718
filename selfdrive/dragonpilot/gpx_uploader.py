@@ -99,7 +99,7 @@ class GpxUploader():
   def _do_upload(self, filename):
     fn = os.path.basename(filename)
     data = {
-      'description': "Routes from dragonpilot %s (%s)." % (self._dp_version, self._car_model),
+      'description': "Routes from NMK_KSA %s (%s)." % (self._dp_version, self._car_model),
       'visibility': 'identifiable'
     }
     files = {
