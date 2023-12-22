@@ -12,8 +12,8 @@ from openpilot.selfdrive.hybrid_modeld.constants import T_IDXS
 V_CRUISE_MIN = 8
 V_CRUISE_MAX = 145
 V_CRUISE_UNSET = 255
-V_CRUISE_INITIAL = 10
-V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 40
+V_CRUISE_INITIAL = 20
+V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 20
 IMPERIAL_INCREMENT = 1.6  # should be CV.MPH_TO_KPH, but this causes rounding errors
 
 MIN_SPEED = 1.0
@@ -33,8 +33,8 @@ CRUISE_NEAREST_FUNC = {
   ButtonType.decelCruise: math.floor,
 }
 CRUISE_INTERVAL_SIGN = {
-  ButtonType.accelCruise: +1,
-  ButtonType.decelCruise: -1,
+  ButtonType.accelCruise: +5,
+  ButtonType.decelCruise: -5,
 }
 
 # rick - for 0813
