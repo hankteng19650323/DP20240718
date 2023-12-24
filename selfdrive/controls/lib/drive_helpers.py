@@ -34,7 +34,7 @@ CRUISE_NEAREST_FUNC = {
 }
 CRUISE_INTERVAL_SIGN = {
   ButtonType.accelCruise: +5,
-  ButtonType.decelCruise: -5,
+  ButtonType.decelCruise: -1,
 }
 
 # rick - for 0813
