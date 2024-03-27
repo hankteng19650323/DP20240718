@@ -178,16 +178,14 @@ def manager_thread() -> None:
   if not params.get_bool("dp_otisserv"):
     ignore += ["otisserv"]
 
-  dpdmonitoringd_ignored = True
-  dp_device_dm_unavailable = params.get_bool("dp_device_dm_unavailable")
   dp_device_is_clone = not is_registered_device()
   params.put_bool("dp_device_is_clone", dp_device_is_clone)
-  if dp_device_is_clone or dp_device_dm_unavailable:
-    ignore += ["uploader"]
-    if dp_device_dm_unavailable:
-      ignore += ["dmonitoringd", "dmonitoringmodeld"]
-      dpdmonitoringd_ignored = False
-  if dpdmonitoringd_ignored:
+  dp_device_dm_unavailable = params.get_bool("dp_device_dm_unavailable")
+  if dp_device_dm_unavailable:
+    ignore += ["uploader", "dmonitoringd", "dmonitoringmodeld"]
+  elif dp_device_is_clone:
+    ignore += ["uploader", "dpdmonitoringd"]
+  else:
     ignore += ["dpdmonitoringd"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll='deviceState')
