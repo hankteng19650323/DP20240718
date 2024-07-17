@@ -1,10 +1,10 @@
-dragonpilot [latest]
+dragonpilot [branch] [latest]
 =======================
 * Up to comma.ai openpilot master branch commit cbee4421da690fa7b260f62c4a2c72ccacc6c902 (2024-07-14)
 * DP HIGHLIGHT:
   * Fixed Lexus IS/GS crashed issue.
 
-dragonpilot [2024.07.13]
+dragonpilot beta3 [2024.07.13]
 =======================
 * Up to comma.ai openpilot master branch commit 01c2174d5968266b87f1d1fecefce5affaeaa624 (2024-07-02)
 * DP HIGHLIGHT:
@@ -16,7 +16,7 @@ dragonpilot [2024.07.13]
   * Device Auto Shutdown Toggle.
   * Device Audible Alert Mode Toggle.
 
-dragonpilot [2024.07.01]
+dragonpilot beta3 [2024.07.01]
 =======================
 * Up to comma.ai openpilot master branch commit 442e9f4ae492901a5698b3188741c97c053026c4 (2024-06-21)
 * DP HIGHLIGHT:
